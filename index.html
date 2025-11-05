@@ -3,47 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spyder Tacos - Official Website</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
   <style>
-    body {
-      background-color: black;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    html, body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      background-color: #000;
+      color: #fff;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       text-align: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
     }
 
     #countdown {
       font-size: 2.5em;
+      font-weight: bold;
       letter-spacing: 2px;
+    }
+
+    .expired {
+      color: #f00;
     }
   </style>
 </head>
 <body>
-  <div id="countdown"></div>
+
+  <h1>SPYDER TACOS</h1>
+  <div id="countdown">Loading...</div>
 
   <script>
-    const countdownElement = document.getElementById("countdown");
-    const targetDate = new Date("January 31, 2026 00:00:00").getTime();
+    // =============================
+    // CONFIGURE YOUR TARGET EPOCH HERE
+    // Example: 1735689600 = Jan 1, 2025 00:00:00 UTC
+    // =============================
+    const targetEpoch = 1767225600; // <-- change this epoch
 
     function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
+      const now = Math.floor(Date.now() / 1000);
+      const remaining = targetEpoch - now;
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const countdownElem = document.getElementById('countdown');
 
-      if (distance < 0) {
-        countdownElement.innerHTML = "Countdown Complete!";
-      } else {
-        countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      if (remaining <= 0) {
+        countdownElem.textContent = "Time's up!";
+        countdownElem.classList.add('expired');
+        return;
       }
+
+      const days = Math.floor(remaining / 86400);
+      const hours = Math.floor((remaining % 86400) / 3600);
+      const minutes = Math.floor((remaining % 3600) / 60);
+      const seconds = remaining % 60;
+
+      countdownElem.textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     updateCountdown();
