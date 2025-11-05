@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       background-color: #000;
-      color: #fff;
+      color: #00ff66;
       height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
@@ -21,25 +21,25 @@
       text-align: center;
     }
 
-    h1 {
-      font-size: 3em;
-      margin-bottom: 0.5em;
-    }
-
     #countdown {
-      font-size: 2.5em;
+      font-size: 3em;
       font-weight: bold;
       letter-spacing: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .tick {
+      transform: scale(1.2);
+      opacity: 0.7;
     }
 
     .expired {
-      color: #f00;
+      color: #ff0000;
     }
   </style>
 </head>
 <body>
 
-  <h1>SPYDER TACOS</h1>
   <div id="countdown">Loading...</div>
 
   <script>
@@ -47,13 +47,13 @@
     // CONFIGURE YOUR TARGET EPOCH HERE
     // Example: 1735689600 = Jan 1, 2025 00:00:00 UTC
     // =============================
-    const targetEpoch = 1767225600; // <-- change this epoch
+    const targetEpoch = 0; // <-- change this epoch
+
+    const countdownElem = document.getElementById('countdown');
 
     function updateCountdown() {
       const now = Math.floor(Date.now() / 1000);
       const remaining = targetEpoch - now;
-
-      const countdownElem = document.getElementById('countdown');
 
       if (remaining <= 0) {
         countdownElem.textContent = "Time's up!";
@@ -66,8 +66,15 @@
       const minutes = Math.floor((remaining % 3600) / 60);
       const seconds = remaining % 60;
 
-      countdownElem.textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      const newText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      // Animate if value changes
+      if (countdownElem.textContent !== newText) {
+        countdownElem.classList.add('tick');
+        setTimeout(() => countdownElem.classList.remove('tick'), 150);
+      }
+
+      countdownElem.textContent = newText;
     }
 
     updateCountdown();
