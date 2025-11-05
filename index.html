@@ -56,7 +56,7 @@
       const remaining = targetEpoch - now;
 
       if (remaining <= 0) {
-        countdownElem.textContent = "Time's up!";
+        countdownElem.textContent = "Loading...";
         countdownElem.classList.add('expired');
         return;
       }
