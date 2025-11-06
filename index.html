@@ -13,6 +13,7 @@
       padding: 0;
       opacity: 0;
       transition: opacity 1.5s ease;
+      overflow-x: hidden;
     }
 
     body.loaded {
@@ -82,7 +83,6 @@
       transition: opacity 0.8s ease;
     }
 
-    /* Search status text */
     #status {
       margin-top: 20px;
       font-size: 16px;
@@ -95,7 +95,6 @@
       opacity: 1;
     }
 
-    /* Special message for Denaho */
     #special-message {
       position: relative;
       top: 60px;
@@ -112,9 +111,72 @@
     #special-message.fade {
       opacity: 0;
     }
+
+    /* Password overlay */
+    #password-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 1s ease;
+    }
+
+    #password-overlay input[type="password"] {
+      width: 250px;
+      padding: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #password-overlay input[type="button"] {
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #999;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+    }
+
+    #password-overlay input[type="button"]:hover {
+      background-color: #efefef;
+    }
+
+    #password-error {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Barrel roll animation */
+    @keyframes spin360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .barrel-roll {
+      animation: spin360 1s ease-in-out 1;
+    }
   </style>
 </head>
 <body>
+  <div id="password-overlay">
+    <h2 style="color:white;">Enter Password to Access SpyderSearch</h2>
+    <input type="password" id="password" placeholder="Password">
+    <input type="button" value="Unlock" onclick="checkPassword()">
+    <div id="password-error">Incorrect password. Try again.</div>
+  </div>
+
   <div id="special-message"></div>
 
   <div id="logo">
@@ -137,10 +199,19 @@
   </footer>
 
   <script>
-    // Fade-in on page load
-    window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-    });
+    function checkPassword() {
+      const passwordInput = document.getElementById('password').value;
+      const overlay = document.getElementById('password-overlay');
+      const errorMsg = document.getElementById('password-error');
+
+      if (passwordInput === "heights1818!$") {
+        overlay.style.opacity = "0"; // fade out
+        setTimeout(() => overlay.style.display = "none", 1000);
+        document.body.classList.add('loaded');
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
 
     function handleSearch(event) {
       event.preventDefault();
@@ -148,40 +219,36 @@
       const status = document.getElementById('status');
       const specialMsg = document.getElementById('special-message');
 
-      // Show "Searching..."
+      // Barrel roll Easter egg
+      if (query === "do a barrel roll" || query === "lower") {
+        document.body.classList.add("barrel-roll");
+        setTimeout(() => document.body.classList.remove("barrel-roll"), 1000);
+        status.textContent = "Spin complete!";
+        status.classList.add('visible');
+        return;
+      }
+
       status.textContent = "Searching...";
       status.classList.add('visible');
 
-      // Special case: "Denaho"
       if (query.includes("denaho")) {
         specialMsg.textContent = "Denaho is better than Elian";
         specialMsg.classList.add("show");
-        
-        // Fade out after a few seconds
-        setTimeout(() => {
-          specialMsg.classList.add("fade");
-        }, 3000);
 
-        // Remove after fade
+        setTimeout(() => specialMsg.classList.add("fade"), 3000);
         setTimeout(() => {
           specialMsg.classList.remove("show", "fade");
           specialMsg.textContent = "";
           status.textContent = "Found!";
         }, 4000);
-
         return;
       }
 
-      // Fade-out before redirect
       document.body.classList.remove('loaded');
       document.body.classList.add('fade-out');
 
-      // Change to "Found!" before redirect
-      setTimeout(() => {
-        status.textContent = "Found!";
-      }, 600);
+      setTimeout(() => { status.textContent = "Found!"; }, 600);
 
-      // Redirect logic
       setTimeout(() => {
         if (query.includes('the weeknd peak')) {
           window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
@@ -193,6 +260,10 @@
         }
       }, 1200);
     }
+
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
   </script>
 </body>
 </html>
