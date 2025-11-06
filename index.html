@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Google</title>
+  <title>SpyderSearch BETA</title>
   <link rel="icon" href="favicon.png" type="image/png">
   <style>
     body {
@@ -12,7 +12,7 @@
       margin: 0;
       padding: 0;
       opacity: 0;
-      transition: opacity 1.5s ease; /* Fade-in effect */
+      transition: opacity 1.5s ease;
     }
 
     body.loaded {
@@ -77,27 +77,58 @@
       text-decoration: underline;
     }
 
-    /* Fade-out animation for search transition */
     .fade-out {
       opacity: 0;
       transition: opacity 0.8s ease;
     }
+
+    /* Search status text */
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #status.visible {
+      opacity: 1;
+    }
+
+    /* Special message for Denaho */
+    #special-message {
+      position: relative;
+      top: 60px;
+      font-size: 20px;
+      color: #333;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    #special-message.show {
+      opacity: 1;
+    }
+
+    #special-message.fade {
+      opacity: 0;
+    }
   </style>
 </head>
 <body>
-  <!-- Old-school Google logo -->
+  <div id="special-message"></div>
+
   <div id="logo">
     <img src="https://www.google.com/logos/1998/googlebeta.jpg" alt="Google 1998 Logo" width="351" height="113">
   </div>
 
-  <!-- Search box -->
   <form id="searchbox" onsubmit="handleSearch(event)">
     <input type="text" id="query" placeholder="Search the web..." name="q" autocomplete="off"><br>
     <input type="submit" value="Google Search">
     <input type="submit" value="I'm Feeling Lucky">
   </form>
 
-  <!-- Footer -->
+  <div id="status"></div>
+
   <footer>
     <a href="#">Advertising</a> | 
     <a href="#">Business Solutions</a> | 
@@ -114,11 +145,43 @@
     function handleSearch(event) {
       event.preventDefault();
       const query = document.getElementById('query').value.trim().toLowerCase();
+      const status = document.getElementById('status');
+      const specialMsg = document.getElementById('special-message');
+
+      // Show "Searching..."
+      status.textContent = "Searching...";
+      status.classList.add('visible');
+
+      // Special case: "Denaho"
+      if (query.includes("denaho")) {
+        specialMsg.textContent = "Denaho is better than Elian";
+        specialMsg.classList.add("show");
+        
+        // Fade out after a few seconds
+        setTimeout(() => {
+          specialMsg.classList.add("fade");
+        }, 3000);
+
+        // Remove after fade
+        setTimeout(() => {
+          specialMsg.classList.remove("show", "fade");
+          specialMsg.textContent = "";
+          status.textContent = "Found!";
+        }, 4000);
+
+        return;
+      }
 
       // Fade-out before redirect
       document.body.classList.remove('loaded');
       document.body.classList.add('fade-out');
 
+      // Change to "Found!" before redirect
+      setTimeout(() => {
+        status.textContent = "Found!";
+      }, 600);
+
+      // Redirect logic
       setTimeout(() => {
         if (query.includes('the weeknd peak')) {
           window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
@@ -128,7 +191,7 @@
           const encoded = encodeURIComponent(query);
           window.location.href = `https://www.google.com/search?q=${encoded}`;
         }
-      }, 800);
+      }, 1200);
     }
   </script>
 </body>
