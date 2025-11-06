@@ -11,6 +11,12 @@
       text-align: center;
       margin: 0;
       padding: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease; /* Fade-in effect */
+    }
+
+    body.loaded {
+      opacity: 1;
     }
 
     #logo {
@@ -19,6 +25,7 @@
 
     #searchbox {
       margin-top: 20px;
+      transition: opacity 0.8s ease;
     }
 
     input[type="text"] {
@@ -36,10 +43,11 @@
       border: 1px solid #dcdcdc;
       background-color: #f5f5f5;
       cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
     input[type="submit"]:hover {
-      border: 1px solid #999;
+      border-color: #999;
       background-color: #efefef;
     }
 
@@ -49,6 +57,7 @@
       width: 100%;
       font-size: 12px;
       color: #555;
+      opacity: 0.8;
     }
 
     a {
@@ -59,6 +68,12 @@
     a:hover {
       text-decoration: underline;
     }
+
+    /* Fade-out class for searching transition */
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
   </style>
 </head>
 <body>
@@ -68,18 +83,44 @@
   </div>
 
   <!-- Search box -->
-  <form id="searchbox" action="#" onsubmit="return false;">
-    <input type="text" placeholder="Search the web..." name="q"><br>
+  <form id="searchbox" onsubmit="handleSearch(event)">
+    <input type="text" id="query" placeholder="Search the web..." name="q" autocomplete="off"><br>
     <input type="submit" value="Google Search">
     <input type="submit" value="I'm Feeling Lucky">
   </form>
 
-  <!-- Footer links like the old days -->
+  <!-- Footer -->
   <footer>
     <a href="#">Advertising</a> | 
     <a href="#">Business Solutions</a> | 
     <a href="#">About Google</a><br>
     © 2000 Google
   </footer>
+
+  <script>
+    // Fade-in effect on page load
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+
+    function handleSearch(event) {
+      event.preventDefault();
+      const query = document.getElementById('query').value.trim().toLowerCase();
+
+      // Add fade-out class
+      document.body.classList.remove('loaded');
+      document.body.classList.add('fade-out');
+
+      // Delay redirect to let animation play
+      setTimeout(() => {
+        if (query.includes('the weeknd peak')) {
+          window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
+        } else {
+          const encoded = encodeURIComponent(query);
+          window.location.href = `https://www.google.com/search?q=${encoded}`;
+        }
+      }, 800); // Matches the CSS fade-out time
+    }
+  </script>
 </body>
 </html>
