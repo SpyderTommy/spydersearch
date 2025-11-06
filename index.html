@@ -2,141 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Taco Physics Demo</title>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
-
+  <title>Google</title>
+  <link rel="icon" href="favicon.png" type="image/png">
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
-      background: #faf3e0;
-      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
-    h1 {
-      position: absolute;
-      top: 10px;
+    #logo {
+      margin-top: 100px;
+    }
+
+    #searchbox {
+      margin-top: 20px;
+    }
+
+    input[type="text"] {
+      width: 400px;
+      height: 25px;
+      font-size: 16px;
+      border: 1px solid #dcdcdc;
+      padding: 5px;
+    }
+
+    input[type="submit"] {
+      margin-top: 20px;
+      font-size: 14px;
+      padding: 5px 12px;
+      border: 1px solid #dcdcdc;
+      background-color: #f5f5f5;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      border: 1px solid #999;
+      background-color: #efefef;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
       width: 100%;
-      font-size: 48px;
-      color: #d96c00;
-      text-shadow: 2px 2px #fff;
-      z-index: 10;
+      font-size: 12px;
+      color: #555;
     }
 
-    #controls {
-      position: absolute;
-      top: 80px;
-      width: 100%;
-      color: #333;
-      font-size: 20px;
-      text-shadow: 1px 1px #fff;
-      z-index: 10;
+    a {
+      color: #0000cc;
+      text-decoration: none;
     }
 
-    canvas {
-      display: block;
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>DEMO</h1>
-  <div id="controls">
-    🖱️ Drag the taco with your mouse<br>
-    ⬅️ ➡️ Move taco | ⬆️ Jump
+  <!-- Old-school Google logo -->
+  <div id="logo">
+    <img src="https://www.google.com/logos/1998/googlebeta.jpg" alt="Google 1998 Logo" width="351" height="113">
   </div>
 
-  <!-- Matter.js Physics Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <!-- Search box -->
+  <form id="searchbox" action="#" onsubmit="return false;">
+    <input type="text" placeholder="Search the web..." name="q"><br>
+    <input type="submit" value="Google Search">
+    <input type="submit" value="I'm Feeling Lucky">
+  </form>
 
-  <script>
-    // Matter.js aliases
-    const { Engine, Render, Runner, Bodies, Body, Composite, Mouse, MouseConstraint } = Matter;
-
-    // Engine and world setup
-    const engine = Engine.create();
-    const { world } = engine;
-
-    // Renderer setup
-    const render = Render.create({
-      element: document.body,
-      engine: engine,
-      options: {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        background: '#faf3e0',
-        wireframes: false
-      }
-    });
-
-    Render.run(render);
-    const runner = Runner.create();
-    Runner.run(runner, engine);
-
-    // Taco body
-    const taco = Bodies.rectangle(window.innerWidth / 2, 200, 120, 80, {
-      restitution: 0.6,
-      friction: 0.8,
-      render: {
-        sprite: {
-          texture: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Taco_icon.png',
-          xScale: 0.3,
-          yScale: 0.3
-        }
-      }
-    });
-
-    // Ground and walls
-    const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 60, { isStatic: true });
-    const leftWall = Bodies.rectangle(0, window.innerHeight / 2, 60, window.innerHeight, { isStatic: true });
-    const rightWall = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 60, window.innerHeight, { isStatic: true });
-
-    Composite.add(world, [taco, ground, leftWall, rightWall]);
-
-    // Mouse controls
-    const mouse = Mouse.create(render.canvas);
-    const mouseConstraint = MouseConstraint.create(engine, {
-      mouse,
-      constraint: {
-        stiffness: 0.2,
-        render: { visible: false }
-      }
-    });
-    Composite.add(world, mouseConstraint);
-    render.mouse = mouse;
-
-    // Keyboard controls
-    const moveForce = 0.01;
-    const jumpForce = 0.03;
-
-    document.addEventListener('keydown', event => {
-      switch (event.code) {
-        case 'ArrowLeft':
-          Body.applyForce(taco, taco.position, { x: -moveForce, y: 0 });
-          Body.setAngularVelocity(taco, -0.2); // spin left
-          break;
-        case 'ArrowRight':
-          Body.applyForce(taco, taco.position, { x: moveForce, y: 0 });
-          Body.setAngularVelocity(taco, 0.2); // spin right
-          break;
-        case 'ArrowUp':
-          if (taco.position.y > window.innerHeight - 120) {
-            Body.applyForce(taco, taco.position, { x: 0, y: -jumpForce });
-            Body.setAngularVelocity(taco, 0.4); // spin on jump
-          }
-          break;
-      }
-    });
-
-    // Adjust viewport on resize
-    window.addEventListener('resize', () => {
-      Render.lookAt(render, {
-        min: { x: 0, y: 0 },
-        max: { x: window.innerWidth, y: window.innerHeight }
-      });
-    });
-  </script>
+  <!-- Footer links like the old days -->
+  <footer>
+    <a href="#">Advertising</a> | 
+    <a href="#">Business Solutions</a> | 
+    <a href="#">About Google</a><br>
+    © 2000 Google
+  </footer>
 </body>
 </html>
