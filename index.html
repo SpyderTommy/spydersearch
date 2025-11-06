@@ -2,83 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spyder Tacos - Official Website</title>
+  <title>Taco Physics Demo</title>
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      background-color: #000;
-      color: #00ff66;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      overflow: hidden;
+      background: #faf3e0;
+      font-family: Arial, sans-serif;
       text-align: center;
     }
 
-    #countdown {
-      font-size: 3em;
-      font-weight: bold;
-      letter-spacing: 2px;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+    h1 {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      font-size: 48px;
+      color: #d96c00;
+      text-shadow: 2px 2px #fff;
+      z-index: 10;
     }
 
-    .tick {
-      transform: scale(1.2);
-      opacity: 0.7;
+    #controls {
+      position: absolute;
+      top: 80px;
+      width: 100%;
+      color: #333;
+      font-size: 20px;
+      text-shadow: 1px 1px #fff;
+      z-index: 10;
     }
 
-    .expired {
-      color: #ff0000;
+    canvas {
+      display: block;
     }
   </style>
 </head>
 <body>
+  <h1>DEMO</h1>
+  <div id="controls">
+    🖱️ Drag the taco with your mouse<br>
+    ⬅️ ➡️ Move taco | ⬆️ Jump
+  </div>
 
-  <div id="countdown">Loading...</div>
+  <!-- Matter.js Physics Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 
   <script>
-    // =============================
-    // CONFIGURE YOUR TARGET EPOCH HERE
-    // Example: 1735689600 = Jan 1, 2025 00:00:00 UTC
-    // =============================
-    const targetEpoch = 1769892956; // <-- change this epoch
+    // Matter.js aliases
+    const { Engine, Render, Runner, Bodies, Body, Composite, Mouse, MouseConstraint } = Matter;
 
-    const countdownElem = document.getElementById('countdown');
+    // Engine and world setup
+    const engine = Engine.create();
+    const { world } = engine;
 
-    function updateCountdown() {
-      const now = Math.floor(Date.now() / 1000);
-      const remaining = targetEpoch - now;
-
-      if (remaining <= 0) {
-        countdownElem.textContent = "Loading...";
-        countdownElem.classList.add('expired');
-        return;
+    // Renderer setup
+    const render = Render.create({
+      element: document.body,
+      engine: engine,
+      options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        background: '#faf3e0',
+        wireframes: false
       }
+    });
 
-      const days = Math.floor(remaining / 86400);
-      const hours = Math.floor((remaining % 86400) / 3600);
-      const minutes = Math.floor((remaining % 3600) / 60);
-      const seconds = remaining % 60;
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, engine);
 
-      const newText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-      // Animate if value changes
-      if (countdownElem.textContent !== newText) {
-        countdownElem.classList.add('tick');
-        setTimeout(() => countdownElem.classList.remove('tick'), 150);
+    // Taco body
+    const taco = Bodies.rectangle(window.innerWidth / 2, 200, 120, 80, {
+      restitution: 0.6,
+      friction: 0.8,
+      render: {
+        sprite: {
+          texture: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Taco_icon.png',
+          xScale: 0.3,
+          yScale: 0.3
+        }
       }
+    });
 
-      countdownElem.textContent = newText;
-    }
+    // Ground and walls
+    const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 60, { isStatic: true });
+    const leftWall = Bodies.rectangle(0, window.innerHeight / 2, 60, window.innerHeight, { isStatic: true });
+    const rightWall = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 60, window.innerHeight, { isStatic: true });
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    Composite.add(world, [taco, ground, leftWall, rightWall]);
+
+    // Mouse controls
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(engine, {
+      mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: { visible: false }
+      }
+    });
+    Composite.add(world, mouseConstraint);
+    render.mouse = mouse;
+
+    // Keyboard controls
+    const moveForce = 0.01;
+    const jumpForce = 0.03;
+
+    document.addEventListener('keydown', event => {
+      switch (event.code) {
+        case 'ArrowLeft':
+          Body.applyForce(taco, taco.position, { x: -moveForce, y: 0 });
+          Body.setAngularVelocity(taco, -0.2); // spin left
+          break;
+        case 'ArrowRight':
+          Body.applyForce(taco, taco.position, { x: moveForce, y: 0 });
+          Body.setAngularVelocity(taco, 0.2); // spin right
+          break;
+        case 'ArrowUp':
+          if (taco.position.y > window.innerHeight - 120) {
+            Body.applyForce(taco, taco.position, { x: 0, y: -jumpForce });
+            Body.setAngularVelocity(taco, 0.4); // spin on jump
+          }
+          break;
+      }
+    });
+
+    // Adjust viewport on resize
+    window.addEventListener('resize', () => {
+      Render.lookAt(render, {
+        min: { x: 0, y: 0 },
+        max: { x: window.innerWidth, y: window.innerHeight }
+      });
+    });
   </script>
 </body>
 </html>
