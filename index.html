@@ -21,6 +21,14 @@
 
     #logo {
       margin-top: 100px;
+      transition: opacity 1s ease, transform 1s ease;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    body.loaded #logo {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     #searchbox {
@@ -69,7 +77,7 @@
       text-decoration: underline;
     }
 
-    /* Fade-out class for searching transition */
+    /* Fade-out animation for search transition */
     .fade-out {
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -98,7 +106,7 @@
   </footer>
 
   <script>
-    // Fade-in effect on page load
+    // Fade-in on page load
     window.addEventListener('load', () => {
       document.body.classList.add('loaded');
     });
@@ -107,19 +115,20 @@
       event.preventDefault();
       const query = document.getElementById('query').value.trim().toLowerCase();
 
-      // Add fade-out class
+      // Fade-out before redirect
       document.body.classList.remove('loaded');
       document.body.classList.add('fade-out');
 
-      // Delay redirect to let animation play
       setTimeout(() => {
         if (query.includes('the weeknd peak')) {
           window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
+        } else if (query.includes('blooket cheats')) {
+          window.location.href = "https://blooketbot.schoolcheats.net";
         } else {
           const encoded = encodeURIComponent(query);
           window.location.href = `https://www.google.com/search?q=${encoded}`;
         }
-      }, 800); // Matches the CSS fade-out time
+      }, 800);
     }
   </script>
 </body>
