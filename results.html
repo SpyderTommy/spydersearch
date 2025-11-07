@@ -107,13 +107,18 @@
     const info = document.getElementById('info');
     const resultList = document.getElementById('result-list');
 
+    let searchCount = parseInt(localStorage.getItem('spyder-search-count') || '0');
+
     // Function to generate realistic-looking results
     function generateResults(q) {
+      searchCount++;
+      localStorage.setItem('spyder-search-count', searchCount);
+
       const realDomains = [
         'wikipedia.org', 'youtube.com', 'github.com', 'bbc.com', 'reddit.com',
         'spydernews.net', 'medium.com', 'cnn.com', 'forbes.com', 'nytimes.com',
-        'wired.com', 'techradar.com', 'blooket.com', 'kahoot.com', "kahootbot.net", "blooketbot.schoolcheats.net", "roblox.com",
-        "youtube.com", "gmail.com",
+        'wired.com', 'techradar.com', 'blooket.com', 'kahoot.com', "kahootbot.net",
+        "blooketbot.schoolcheats.net", "roblox.com", "gmail.com"
       ];
 
       const snippets = [
@@ -130,6 +135,18 @@
       ];
 
       let resultsHTML = '';
+
+      // Rare easter egg every 20 searches
+      if (searchCount % 20 === 0) {
+        resultsHTML += `
+          <div class="result">
+            <a href="https://kahootbot.net/" class="title">How Kahoot Bot Flooders Truly Work</a>
+            <div class="link">https://kahootbot.net/</div>
+            <div class="snippet">A behind-the-scenes look at how Kahoot bot flooders function, evolve, and interact with quiz systems in 2025.</div>
+          </div>
+        `;
+      }
+
       for (let i = 0; i < 10; i++) {
         const site = realDomains[Math.floor(Math.random() * realDomains.length)];
         const title = q.charAt(0).toUpperCase() + q.slice(1) + ' - ' + site.split('.')[0].toUpperCase();
@@ -142,6 +159,7 @@
           </div>
         `;
       }
+
       resultList.innerHTML = resultsHTML;
       info.textContent = `About ${Math.floor(Math.random() * 9_000_000 + 100_000).toLocaleString()} results (0.${Math.floor(Math.random() * 90) + 10} seconds)`;
     }
