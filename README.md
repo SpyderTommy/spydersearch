@@ -4,4 +4,4 @@ A Google-type clone that remakes the entirety of Google's systems. Heavily creat
 
 Featuring: Easter Eggs, Eaglercraft Cheat Engines, and Blooket & Kahoot hacks. (You gotta find em :D)
 
-https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true
+<img width="612" height="103" alt="SpyderLogo" src="https://github.com/user-attachments/assets/88aebae4-759b-4d47-84c5-2e0cf669d36d" />
