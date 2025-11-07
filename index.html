@@ -227,6 +227,13 @@
         setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
         return;
       }
+      if (query.includes("new heights academy")) {
+        specialMsg.textContent = "SY 2025-2026";
+        specialMsg.classList.add("show");
+        setTimeout(() => specialMsg.classList.add("fade"), 3000);
+        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
+        return;
+      }
       if (query.includes("elian") || query === "lower") {
         specialMsg.textContent = "gurt yo";
         specialMsg.classList.add("show");
