@@ -1,166 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>SpyderSearch 2025</title>
-<link rel="icon" href="favicon.png" type="image/png">
-<style>
-/* General Page Styles */
-body {
-  background-color: #fff;
-  font-family: "Google Sans", Arial, Helvetica, sans-serif;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 1.5s ease;
-}
-body.loaded {
-  opacity: 1;
-}
-body.fade-out {
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
+  <meta charset="UTF-8">
+  <title>SpyderSearch</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <style>
+    /* Base styling */
+    body {
+      background-color: #fff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    body.loaded {
+      opacity: 1;
+    }
 
-/* Logo */
-#logo {
-  margin-top: 13vh;
-  transition: opacity 1s ease, transform 1s ease;
-  opacity: 0;
-  transform: translateY(-20px);
-}
-body.loaded #logo {
-  opacity: 1;
-  transform: translateY(0);
-}
-#logo img {
-  width: 272px;
-  height: auto;
-}
+    /* Logo */
+    #logo {
+      margin-top: 160px;
+      transition: opacity 1s ease, transform 1s ease;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    body.loaded #logo {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-/* Search box */
-#searchbox {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: opacity 0.8s ease;
-}
-body.loaded #searchbox {
-  opacity: 1;
-}
+    /* Search box */
+    #searchbox {
+      margin-top: 25px;
+      transition: opacity 0.8s ease;
+    }
+    input[type="text"] {
+      width: 550px;
+      height: 45px;
+      border: 1px solid #dfe1e5;
+      border-radius: 25px;
+      padding: 0 20px;
+      font-size: 16px;
+      outline: none;
+      transition: box-shadow 0.2s ease;
+    }
+    input[type="text"]:focus {
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      margin: 6px;
+      font-size: 14px;
+      padding: 10px 24px;
+      border: 1px solid #dfe1e5;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    input[type="submit"]:hover {
+      background-color: #f1f3f4;
+      border-color: #dadce0;
+    }
 
-input[type="text"] {
-  width: 580px;
-  max-width: 90%;
-  height: 45px;
-  font-size: 16px;
-  border: 1px solid #dfe1e5;
-  border-radius: 24px;
-  padding: 0 45px 0 20px;
-  box-shadow: none;
-  outline: none;
-  transition: box-shadow 0.2s ease, border 0.2s ease;
-}
-input[type="text"]:hover, input[type="text"]:focus {
-  border-color: #dcdcdc;
-  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-}
+    /* Special message */
+    #special-message {
+      position: relative;
+      top: 80px;
+      font-size: 20px;
+      color: #202124;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    #special-message.show {
+      opacity: 1;
+    }
+    #special-message.fade {
+      opacity: 0;
+    }
 
-/* Buttons with glow pulse */
-input[type="submit"] {
-  margin: 30px 5px 0 5px;
-  font-size: 14px;
-  padding: 10px 20px;
-  border: 1px solid #f8f9fa;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  color: #3c4043;
-  cursor: pointer;
-  transition: box-shadow 0.3s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
-}
-input[type="submit"]:hover {
-  border-color: #dadce0;
-  background-color: #f8f9fa;
-  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.15);
-  transform: translateY(-1px);
-  animation: pulseGlow 1.2s infinite alternate ease-in-out;
-}
-@keyframes pulseGlow {
-  0% { box-shadow: 0 2px 6px rgba(60, 64, 67, 0.1); }
-  100% { box-shadow: 0 3px 12px rgba(60, 64, 67, 0.25); }
-}
+    /* Status text */
+    #status {
+      margin-top: 25px;
+      font-size: 16px;
+      color: #5f6368;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #status.visible {
+      opacity: 1;
+    }
 
-/* Special message */
-#special-message {
-  font-size: 18px;
-  color: #333;
-  margin-top: 15px;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-#special-message.show {
-  opacity: 1;
-}
-#special-message.fade {
-  opacity: 0;
-}
+    /* Footer */
+    footer {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      font-size: 13px;
+      color: #5f6368;
+      opacity: 0.8;
+    }
 
-/* Status text */
-#status {
-  margin-top: 15px;
-  font-size: 16px;
-  color: #555;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-#status.visible {
-  opacity: 1;
-}
-
-/* Footer */
-footer {
-  position: fixed;
-  bottom: 10px;
-  width: 100%;
-  font-size: 13px;
-  color: #70757a;
-  opacity: 0.8;
-}
-footer a {
-  color: #1a0dab;
-  text-decoration: none;
-  margin: 0 5px;
-}
-footer a:hover {
-  text-decoration: underline;
-}
-
-/* Barrel roll */
-@keyframes barrelRoll {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-</style>
+    /* Animation */
+    @keyframes barrelRoll {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
-
 <body>
   <!-- Special message -->
   <div id="special-message"></div>
 
   <!-- Logo -->
   <div id="logo">
-    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+         alt="SpyderSearch Logo" width="272" height="92">
   </div>
 
   <!-- Search box -->
   <form id="searchbox" onsubmit="handleSearch(event)">
     <input type="text" id="query" placeholder="Search SpyderSearch..." name="q" autocomplete="off"><br>
-    <div>
-      <input type="submit" value="Spyder Search">
-      <input type="submit" value="I'm Feeling Lucky">
-    </div>
+    <input type="submit" value="Spyder Search">
+    <input type="button" id="lucky-btn" value="I'm Feeling Lucky">
   </form>
 
   <!-- Status -->
@@ -168,95 +132,94 @@ footer a:hover {
 
   <!-- Footer -->
   <footer>
-    <a href="#">About</a> | 
-    <a href="#">Privacy</a> | 
-    <a href="#">Terms</a>
+    © SpyderGurt 2025
   </footer>
 
-<script>
-window.addEventListener('load', () => {
-  document.body.classList.add('loaded');
-});
+  <script>
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
 
-function handleSearch(event) {
-  event.preventDefault();
-  const query = document.getElementById('query').value.trim().toLowerCase();
-  const status = document.getElementById('status');
-  const specialMsg = document.getElementById('special-message');
-  status.textContent = "Searching...";
-  status.classList.add('visible');
+    // Lucky button redirects to Cheese page
+    document.getElementById('lucky-btn').addEventListener('click', () => {
+      window.location.href = "https://en.wikipedia.org/wiki/Cheese";
+    });
 
-  // Easter eggs
-  if (query.includes("denaho")) {
-    specialMsg.textContent = "Denaho is better than Elian";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
-    return;
-  }
+    function handleSearch(event) {
+      event.preventDefault();
+      const query = document.getElementById('query').value.trim().toLowerCase();
+      const status = document.getElementById('status');
+      const specialMsg = document.getElementById('special-message');
 
-  if (query.includes("elian") || query === "lower") {
-    specialMsg.textContent = "gurt yo";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => { 
-      specialMsg.classList.remove("show", "fade"); 
-      specialMsg.textContent = ""; 
-      status.textContent = "Found!"; 
-      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"; 
-    }, 4000);
-    return;
-  }
+      status.textContent = "Searching...";
+      status.classList.add('visible');
 
-  if (query === "do a barrel roll") {
-    document.body.style.animation = "barrelRoll 1s linear";
-    setTimeout(() => document.body.style.animation = "", 1000);
-    return;
-  }
-
-  if (query === "do a barrel roll x10" || query === "do a barrel roll 10") {
-    document.body.style.animation = "barrelRoll 1s linear infinite";
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      if (count >= 10) {
-        clearInterval(interval);
-        document.body.style.animation = "";
+      // Easter eggs
+      if (query.includes("denaho")) {
+        specialMsg.textContent = "Denaho is better than Elian";
+        specialMsg.classList.add("show");
+        setTimeout(() => specialMsg.classList.add("fade"), 3000);
+        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
+        return;
       }
-    }, 1000);
-    return;
-  }
 
-  if (query.includes("blox fruits peak") || query === "lower") {
-    window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-    return;
-  }
+      if (query.includes("elian") || query === "lower") {
+        specialMsg.textContent = "gurt yo";
+        specialMsg.classList.add("show");
+        setTimeout(() => specialMsg.classList.add("fade"), 3000);
+        setTimeout(() => {
+          specialMsg.classList.remove("show", "fade");
+          specialMsg.textContent = "";
+          status.textContent = "Found!";
+          window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
+        }, 4000);
+        return;
+      }
 
-  if (query.includes("kahoot bot")) {
-    window.location.href = "https://kahootbot.net";
-    return;
-  }
+      if (query.includes("blox fruits peak")) {
+        window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+        return;
+      }
 
-  if (query.includes("cabrera")) {
-    specialMsg.textContent = "She sucks, don't search that ever again.";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.remove("show"), 4000);
-    return;
-  }
+      if (query.includes("blooket bot")) {
+        window.location.href = "https://blooketbot.schoolcheats.net/";
+        return;
+      }
 
-  // Fade-out transition before redirect
-  document.body.classList.remove('loaded');
-  document.body.classList.add('fade-out');
+      if (query.includes("the weeknd peak")) {
+        window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
+        return;
+      }
 
-  setTimeout(() => {
-    status.textContent = "Found!";
-  }, 600);
+      if (query.includes("cabrera")) {
+        specialMsg.textContent = "She sucks, don't search that ever again.";
+        specialMsg.classList.add("show");
+        setTimeout(() => specialMsg.classList.add("fade"), 4000);
+        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; }, 5000);
+        return;
+      }
 
-  setTimeout(() => {
-    const encoded = encodeURIComponent(query);
-    window.location.href = `https://www.google.com/search?q=${encoded}`;
-  }, 1200);
-}
-</script>
+      if (query === "do a barrel roll") {
+        document.body.style.animation = "barrelRoll 1s linear";
+        setTimeout(() => document.body.style.animation = "", 1000);
+        return;
+      }
+
+      if (query === "do a barrel roll x10") {
+        document.body.style.animation = "barrelRoll 0.5s linear infinite";
+        setTimeout(() => document.body.style.animation = "", 5000);
+        return;
+      }
+
+      // Default search redirect
+      document.body.classList.remove('loaded');
+      document.body.classList.add('fade-out');
+      setTimeout(() => { status.textContent = "Found!"; }, 600);
+      setTimeout(() => {
+        const encoded = encodeURIComponent(query);
+        window.location.href = `https://www.google.com/search?q=${encoded}`;
+      }, 1200);
+    }
+  </script>
 </body>
 </html>
