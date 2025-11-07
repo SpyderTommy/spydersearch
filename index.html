@@ -18,20 +18,17 @@
       height: 100vh;
       opacity: 0;
       animation: fadeIn 1s ease forwards;
-      transition: background 0.5s ease;
     }
-
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     #logo {
-      width: 320px;
+      width: 340px;
       margin-bottom: 25px;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
     #logo:hover { transform: scale(1.05); }
 
-    /* Animated Easter Egg message */
     #special-message {
       font-size: 20px;
       color: #ff6666;
@@ -47,22 +44,15 @@
       transform: translateY(0);
     }
 
-    #search-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
     #search-box {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       width: 550px;
-      background-color: #1e1e1e;
+      background-color: #1f1f1f;
       border: 1px solid #333;
       border-radius: 24px;
       padding: 10px 20px;
+      margin-bottom: 25px;
       transition: box-shadow 0.3s;
     }
     #search-box:hover { box-shadow: 0 0 10px #333; }
@@ -76,9 +66,7 @@
       outline: none;
     }
 
-    #buttons { margin-top: 25px; }
-
-    button {
+    #buttons button {
       background-color: #2c2c2c;
       border: 1px solid #444;
       color: #e0e0e0;
@@ -89,82 +77,67 @@
       font-size: 14px;
       transition: background-color 0.3s, transform 0.2s;
     }
-    button:hover {
+    #buttons button:hover {
       background-color: #3a3a3a;
       transform: translateY(-2px);
     }
 
-    /* Google-style shortcuts */
+    /* Shortcuts grid */
     #shortcuts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
       gap: 30px;
       width: 600px;
       margin-top: 60px;
       justify-items: center;
-      text-align: center;
     }
-
     .shortcut {
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #ddd;
       cursor: grab;
-      transition: transform 0.2s, background 0.3s;
       user-select: none;
-    }
-
-    .shortcut:active {
-      cursor: grabbing;
-      transform: scale(0.95);
-    }
-
-    .shortcut img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-bottom: 8px;
-      object-fit: cover;
-      background-color: #2a2a2a;
-      border: 2px solid #333;
       transition: transform 0.2s;
     }
+    .shortcut:hover { transform: scale(1.05); }
 
-    .shortcut:hover img { transform: scale(1.1); }
+    .shortcut img {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      border: 2px solid #333;
+      margin-bottom: 8px;
+      object-fit: cover;
+    }
 
     .shortcut span {
-      font-size: 14px;
+      font-size: 13px;
       color: #ccc;
-      margin-top: 3px;
+      text-align: center;
+      word-wrap: break-word;
+      max-width: 80px;
     }
 
     #add-shortcut {
       display: flex;
       flex-direction: column;
       align-items: center;
-      cursor: pointer;
       opacity: 0.7;
-      transition: opacity 0.3s;
+      cursor: pointer;
     }
     #add-shortcut:hover { opacity: 1; }
-
     #add-shortcut div {
-      width: 50px;
-      height: 50px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       background-color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 28px;
-      color: #aaa;
       border: 2px solid #444;
-    }
-
-    #add-shortcut span {
-      margin-top: 5px;
-      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
       color: #aaa;
     }
 
@@ -175,6 +148,41 @@
       color: #777;
     }
 
+    /* Add Shortcut popup */
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 20px;
+      width: 300px;
+      z-index: 999;
+      text-align: left;
+    }
+    #popup h3 { margin-top: 0; }
+    #popup input {
+      width: 100%;
+      background: #2a2a2a;
+      border: 1px solid #555;
+      color: white;
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    #popup button {
+      background: #3a3a3a;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      color: white;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
     @keyframes barrelRoll {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
@@ -182,49 +190,62 @@
   </style>
 </head>
 <body>
-  <img id="logo" src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" onclick="window.location.href='http://spydertacos.space/DragonX_V4.html'">
+  <img id="logo" src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true"
+    alt="SpyderSearch Logo" onclick="window.location.href='http://spydertacos.space/DragonX_V4.html'">
   <div id="special-message"></div>
 
-  <div id="search-container">
-    <div id="search-box">
-      <input type="text" id="search" placeholder="Search SpyderSearch...">
-    </div>
+  <div id="search-box">
+    <input type="text" id="search" placeholder="Search SpyderSearch...">
+  </div>
 
-    <div id="buttons">
-      <button onclick="search()">SpyderSearch</button>
-      <button onclick="feelingLucky()">I’m Feeling Lucky</button>
-    </div>
+  <div id="buttons">
+    <button onclick="search()">SpyderSearch</button>
+    <button onclick="feelingLucky()">I'm Feeling Lucky</button>
   </div>
 
   <div id="shortcuts"></div>
 
   <footer>© SpyderGurt 2025</footer>
 
+  <!-- Add Shortcut Popup -->
+  <div id="popup">
+    <h3>Add Shortcut</h3>
+    <input id="sc-name" placeholder="Name">
+    <input id="sc-url" placeholder="URL (https://)">
+    <input id="sc-img" placeholder="Image URL (optional)">
+    <button onclick="saveShortcut()">Save</button>
+    <button onclick="closePopup()">Cancel</button>
+  </div>
+
   <script>
     const shortcutsContainer = document.getElementById('shortcuts');
+    const popup = document.getElementById('popup');
+    const nameInput = document.getElementById('sc-name');
+    const urlInput = document.getElementById('sc-url');
+    const imgInput = document.getElementById('sc-img');
     const specialMsg = document.getElementById('special-message');
     let shortcuts = JSON.parse(localStorage.getItem('spyderShortcuts')) || [];
 
     function renderShortcuts() {
       shortcutsContainer.innerHTML = '';
-      shortcuts.forEach((sc, i) => {
+      shortcuts.forEach((s, i) => {
         const div = document.createElement('div');
         div.className = 'shortcut';
         div.draggable = true;
-        div.innerHTML = `<img src="${sc.img}" alt=""><span>${sc.name}</span>`;
-        div.onclick = () => window.open(sc.url, '_blank');
+        div.innerHTML = `
+          <img src="${s.img || 'https://www.google.com/s2/favicons?sz=64&domain_url=' + s.url}" alt="">
+          <span>${s.name}</span>
+        `;
+        div.onclick = () => window.open(s.url, '_blank');
 
-        // drag-and-drop reordering
-        div.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('index', i);
-        });
+        div.addEventListener('dragstart', e => e.dataTransfer.setData('index', i));
         div.addEventListener('dragover', e => e.preventDefault());
         div.addEventListener('drop', e => {
           const from = e.dataTransfer.getData('index');
           const to = i;
-          const item = shortcuts.splice(from, 1)[0];
-          shortcuts.splice(to, 0, item);
-          localStorage.setItem('spyderShortcuts', JSON.stringify(shortcuts));
+          const moved = shortcuts.splice(from, 1)[0];
+          shortcuts.splice(to, 0, moved);
+          saveToStorage();
           renderShortcuts();
         });
 
@@ -234,19 +255,33 @@
       const addDiv = document.createElement('div');
       addDiv.id = 'add-shortcut';
       addDiv.innerHTML = `<div>+</div><span>Add shortcut</span>`;
-      addDiv.onclick = addShortcut;
+      addDiv.onclick = openPopup;
       shortcutsContainer.appendChild(addDiv);
     }
 
-    function addShortcut() {
-      const name = prompt('Enter shortcut name:');
-      if (!name) return;
-      const url = prompt('Enter shortcut URL (include https://):');
-      if (!url) return;
-      const img = prompt('Enter image URL (optional):') || 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Default_pfp.jpg';
+    function openPopup() {
+      popup.style.display = 'block';
+    }
+    function closePopup() {
+      popup.style.display = 'none';
+      nameInput.value = '';
+      urlInput.value = '';
+      imgInput.value = '';
+    }
+
+    function saveShortcut() {
+      const name = nameInput.value.trim();
+      const url = urlInput.value.trim();
+      const img = imgInput.value.trim();
+      if (!name || !url) return;
       shortcuts.push({ name, url, img });
-      localStorage.setItem('spyderShortcuts', JSON.stringify(shortcuts));
+      saveToStorage();
+      closePopup();
       renderShortcuts();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('spyderShortcuts', JSON.stringify(shortcuts));
     }
 
     renderShortcuts();
@@ -255,51 +290,26 @@
       const q = document.getElementById('search').value.trim().toLowerCase();
       if (!q) return;
 
-      // Easter eggs
-      if (q.includes('denaho')) {
-        showMessage('Denaho is better than Elian');
-        return;
-      }
-
+      if (q.includes('denaho')) return showMessage('Denaho is better than Elian');
       if (q.includes('elian') || q === 'lower') {
         showMessage('gurt yo');
-        setTimeout(() => {
-          window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
-        }, 3500);
+        setTimeout(() => window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3500);
         return;
       }
-
       if (q === 'do a barrel roll') {
         document.body.style.animation = 'barrelRoll 1s linear';
         setTimeout(() => document.body.style.animation = '', 1000);
         return;
       }
-
       if (q === 'do a barrel roll x10') {
         document.body.style.animation = 'barrelRoll 10s linear infinite';
         setTimeout(() => document.body.style.animation = '', 10000);
         return;
       }
-
-      if (q.includes('blox fruits peak')) {
-        window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-        return;
-      }
-
-      if (q.includes('blooket bot')) {
-        window.location.href = "https://blooketbot.schoolcheats.net/";
-        return;
-      }
-
-      if (q.includes('kahoot bot')) {
-        window.location.href = "https://kahootbot.net/";
-        return;
-      }
-
-      if (q.includes('cabrera')) {
-        showMessage("She sucks, don't search that ever again.");
-        return;
-      }
+      if (q.includes('blox fruits peak')) return window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+      if (q.includes('blooket bot')) return window.location.href = "https://blooketbot.schoolcheats.net/";
+      if (q.includes('kahoot bot')) return window.location.href = "https://kahootbot.net/";
+      if (q.includes('cabrera')) return showMessage("She sucks, don't search that ever again.");
 
       window.location.href = `results.html?q=${encodeURIComponent(q)}`;
     }
@@ -308,8 +318,8 @@
       window.location.href = 'https://en.wikipedia.org/wiki/Cheese';
     }
 
-    function showMessage(text) {
-      specialMsg.textContent = text;
+    function showMessage(msg) {
+      specialMsg.textContent = msg;
       specialMsg.classList.add('show');
       setTimeout(() => {
         specialMsg.classList.remove('show');
