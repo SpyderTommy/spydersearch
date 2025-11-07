@@ -1,286 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SpyderSearch</title>
-  <link rel="icon" href="favicon.png" type="image/png">
-  <style>
-    /* Base styling (Dark Mode) */
-    body {
-      background-color: #121212;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      opacity: 0;
-      transition: opacity 1.5s ease;
-      color: #e8eaed;
-    }
-    body.loaded { opacity: 1; }
+<meta charset="utf-8" />
+<title>SpyderSearch</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+  /* ---------- Base / Dark Mode ---------- */
+  :root{
+    --bg:#121212;
+    --card:#202124;
+    --muted:#9aa0a6;
+    --text:#e8eaed;
+    --accent:#1a73e8;
+    --tile-hover: rgba(255,255,255,0.04);
+  }
+  html,body{height:100%; margin:0;}
+  body{
+    background:var(--bg);
+    font-family: "Google Sans", Arial, Helvetica, sans-serif;
+    color:var(--text);
+    text-align:center;
+    transition:opacity 1.2s ease;
+    opacity:0;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  body.loaded{opacity:1;}
+  a{color:inherit; text-decoration:none;}
 
-    /* Logo */
-    #logo {
-      margin-top: 140px;
-      transition: opacity 1s ease, transform 1s ease;
-      opacity: 0;
-      transform: translateY(-20px);
-      cursor: pointer;
-    }
-    #logo img {
-      width: 440px;
-      height: auto;
-      transition: transform 0.3s ease;
-    }
-    #logo img:hover { transform: scale(1.05); }
-    body.loaded #logo { opacity: 1; transform: translateY(0); }
+  /* ---------- Logo ---------- */
+  #logo{
+    margin-top:110px;
+    cursor:pointer;
+    transition:transform 0.28s ease, opacity 1s ease;
+    opacity:0; transform: translateY(-16px);
+    display:inline-block;
+  }
+  body.loaded #logo{opacity:1; transform:translateY(0);}
+  #logo img{ width:440px; max-width:88vw; height:auto; transition:transform .25s ease, filter .25s ease; display:block; margin:0 auto;}
+  #logo img:hover{ transform:scale(1.04); filter:brightness(1.05);}
 
-    /* Search box */
-    #searchbox { margin-top: 25px; transition: opacity 0.8s ease; }
-    input[type="text"] {
-      width: 550px;
-      height: 45px;
-      border: 1px solid #3c4043;
-      border-radius: 25px;
-      padding: 0 20px;
-      font-size: 16px;
-      outline: none;
-      background-color: #202124;
-      color: #e8eaed;
-      transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    input[type="text"]:focus {
-      box-shadow: 0 0 6px rgba(255,255,255,0.2);
-      border-color: #8ab4f8;
-    }
-    input[type="submit"],
-    input[type="button"] {
-      margin-top: 20px;
-      margin: 6px;
-      font-size: 14px;
-      padding: 10px 24px;
-      border: 1px solid #3c4043;
-      background-color: #303134;
-      border-radius: 5px;
-      cursor: pointer;
-      color: #e8eaed;
-      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-    }
-    input[type="submit"]:hover,
-    input[type="button"]:hover {
-      background-color: #3c4043;
-      border-color: #5f6368;
-    }
-    input[type="submit"]:active,
-    input[type="button"]:active {
-      transform: scale(0.98);
-    }
+  /* ---------- Search ---------- */
+  #searchbox{ margin-top:22px; transition:opacity .8s ease;}
+  input[type="text"]{
+    width:620px; max-width:90vw; height:48px; border-radius:28px;
+    padding:0 20px; font-size:16px; border:1px solid #333;
+    background:var(--card); color:var(--text); outline:none;
+    box-shadow: none; transition: box-shadow .18s ease, border-color .18s ease;
+  }
+  input[type="text"]:focus{
+    box-shadow:0 6px 22px rgba(0,0,0,0.6); border-color:rgba(138,180,248,0.18);
+  }
 
-    /* Shortcuts section (Google 2025 style) */
-    .shortcuts {
-      margin-top: 40px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 30px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .shortcut {
-      width: 90px;
-      height: 90px;
-      border-radius: 10px;
-      background-color: transparent;
-      text-decoration: none;
-      color: #e8eaed;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-    .shortcut:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      transform: translateY(-3px);
-    }
-    .shortcut img {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-    .shortcut span {
-      font-size: 13px;
-      color: #e8eaed;
-      opacity: 0.9;
-    }
+  .btn-row{ margin-top:18px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .btn{
+    background: #2b2b2d; border:1px solid #3c4043; color:var(--text); padding:10px 22px;
+    border-radius:6px; cursor:pointer; font-size:14px; transition: transform .08s ease, box-shadow .18s ease, background .12s ease;
+  }
+  .btn:hover{ transform:translateY(-3px); background:#333336; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+  .btn:active{ transform:translateY(0); }
 
-    /* Special message */
-    #special-message {
-      position: relative;
-      top: 80px;
-      font-size: 20px;
-      color: #e8eaed;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-    #special-message.show { opacity: 1; }
-    #special-message.fade { opacity: 0; }
+  /* ---------- Shortcuts grid (Google style) ---------- */
+  .shortcuts-wrap{ margin-top:26px; display:flex; justify-content:center; }
+  .shortcuts{
+    max-width:760px; width:100%;
+    display:flex; flex-wrap:wrap; gap:16px; justify-content:center;
+    padding:14px 8px 6px;
+  }
 
-    /* Status text */
-    #status {
-      margin-top: 25px;
-      font-size: 16px;
-      color: #9aa0a6;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    #status.visible { opacity: 1; }
+  .card{
+    width:84px; height:84px; border-radius:12px; display:flex;
+    align-items:center; justify-content:center; flex-direction:column;
+    background:transparent; transition: transform .18s ease, background .12s ease, box-shadow .12s ease;
+    user-select:none; position:relative; cursor:grab;
+  }
+  .card:active{ cursor:grabbing; }
+  .card:hover{ background:var(--tile-hover); transform:translateY(-6px); box-shadow:0 10px 30px rgba(0,0,0,0.6); }
 
-    /* Footer */
-    footer {
-      position: fixed;
-      bottom: 20px;
-      width: 100%;
-      font-size: 13px;
-      color: #9aa0a6;
-      opacity: 0.8;
-    }
+  .card .icon-wrap{
+    width:48px; height:48px; border-radius:50%;
+    background:var(--card); display:flex; align-items:center; justify-content:center; overflow:hidden;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover .icon-wrap{ transform:scale(1.06); box-shadow:0 6px 18px rgba(0,0,0,0.6); }
+  .card img.icon{ width:34px; height:34px; object-fit:cover; display:block; border-radius:50%; }
 
-    /* Animation */
-    @keyframes barrelRoll {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-  </style>
+  .card .label{ margin-top:8px; font-size:12px; color:var(--text); opacity:.92; text-align:center; max-width:78px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* 3-dot menu (Edit/Delete) */
+  .menu-btn{
+    position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; background:transparent; border:none; color:var(--muted); opacity:0; transition:opacity .12s;
+  }
+  .card:hover .menu-btn{ opacity:1; }
+  .menu-panel{
+    position:absolute; right:6px; top:34px; background:var(--card); border-radius:8px; padding:6px; box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    display:none; z-index:50;
+  }
+  .menu-panel button{
+    display:block; width:100%; text-align:left; background:transparent; border:none; color:var(--text); padding:8px 10px; cursor:pointer; border-radius:6px;
+  }
+  .menu-panel button:hover{ background:rgba(255,255,255,0.03); }
+
+  /* Add tile */
+  .add-tile{
+    width:84px; height:84px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background:transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); cursor:pointer; transition: background .12s, transform .12s;
+  }
+  .add-tile:hover{ background:var(--tile-hover); transform:translateY(-6px); color:var(--text); }
+
+  /* Drag placeholder style */
+  .placeholder{
+    width:84px; height:84px; border-radius:12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.03);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---------- Modal (zoom-in) ---------- */
+  #shortcutModal{
+    display:none; position:fixed; inset:0; z-index:400;
+    align-items:center; justify-content:center; background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+  }
+  .modal{
+    width:340px; max-width:92vw; background:var(--card); border-radius:12px; padding:18px;
+    transform: scale(.88); opacity:0; transition: transform .22s cubic-bezier(.2,.9,.3,1), opacity .18s ease;
+    box-shadow:0 14px 48px rgba(0,0,0,0.7);
+  }
+  #shortcutModal.open .modal{ transform: scale(1); opacity:1; }
+
+  .modal h3{ margin:0 0 12px; font-size:16px; color:var(--text); text-align:center;}
+  .modal label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
+  .modal input[type="text"], .modal input[type="url"]{
+    width:100%; padding:10px; border-radius:8px; border:1px solid #333; background:#151515; color:var(--text); margin-bottom:10px;
+  }
+  .modal .row{ display:flex; gap:8px; justify-content:flex-end; margin-top:8px;}
+  .modal .row button{
+    padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600;
+  }
+  .btn-cancel{ background:#444; color:#fff; }
+  .btn-save{ background:var(--accent); color:#fff; }
+
+  /* ---------- status / special message ---------- */
+  #special-message{ margin-top:18px; font-size:16px; color:var(--text); opacity:0; transition:opacity .25s ease; }
+  #special-message.show{ opacity:1; }
+
+  #status{ margin-top:10px; color:var(--muted); font-size:14px; opacity:0; transition:opacity .2s; }
+  #status.visible{ opacity:1; }
+
+  /* ---------- footer ---------- */
+  footer{ position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px; }
+
+  /* small responsive tweaks */
+  @media (max-width:480px){
+    #logo{ margin-top:64px; }
+    input[type="text"]{ width:88vw; }
+    .card{ width:78px; height:78px; }
+    .card .label{ font-size:11px; max-width:66px; }
+  }
+</style>
 </head>
 <body>
+  <!-- Special message -->
   <div id="special-message"></div>
 
   <!-- Logo -->
-  <div id="logo">
-    <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo">
+  <div id="logo" title="Go to DragonX">
+    <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" width="440" />
   </div>
 
   <!-- Search box -->
-  <form id="searchbox" onsubmit="handleSearch(event)">
-    <input type="text" id="query" placeholder="Search SpyderSearch..." name="q" autocomplete="off"><br>
-    <input type="submit" value="Spyder Search">
-    <input type="button" id="lucky-btn" value="I'm Feeling Lucky">
+  <form id="searchbox" onsubmit="handleSearch(event)" autocomplete="off">
+    <input id="query" type="text" placeholder="Search SpyderSearch..." name="q" />
+    <div class="btn-row">
+      <button type="submit" class="btn">Spyder Search</button>
+      <button type="button" id="lucky-btn" class="btn">I'm Feeling Lucky</button>
+    </div>
   </form>
 
-  <!-- Google-style Shortcuts -->
-  <div class="shortcuts">
-    <a href="https://www.google.com" class="shortcut" target="_blank">
-      <img src="https://www.google.com/favicon.ico" alt="Google">
-      <span>Google</span>
-    </a>
-    <a href="https://www.youtube.com" class="shortcut" target="_blank">
-      <img src="https://www.youtube.com/s/desktop/7c23337d/img/favicon_144x144.png" alt="YouTube">
-      <span>YouTube</span>
-    </a>
-    <a href="https://blooket.com" class="shortcut" target="_blank">
-      <img src="https://blooket.com/favicon.ico" alt="Blooket">
-      <span>Blooket</span>
-    </a>
-    <a href="https://kahoot.it" class="shortcut" target="_blank">
-      <img src="https://kahoot.it/favicon.ico" alt="Kahoot">
-      <span>Kahoot</span>
-    </a>
-    <a href="https://wikipedia.org" class="shortcut" target="_blank">
-      <img src="https://wikipedia.org/static/favicon/wikipedia.ico" alt="Wikipedia">
-      <span>Wikipedia</span>
-    </a>
-    <a href="https://discord.com" class="shortcut" target="_blank">
-      <img src="https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" alt="Discord">
-      <span>Discord</span>
-    </a>
+  <!-- Shortcuts grid -->
+  <div class="shortcuts-wrap">
+    <div class="shortcuts" id="shortcutGrid" aria-live="polite"></div>
+  </div>
+  <!-- Add tile (also appears inside grid as last item) -->
+  <div style="margin-top:10px;">
+    <button id="addShortcutBtn" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);">+ Add shortcut</button>
   </div>
 
+  <!-- Status -->
   <div id="status"></div>
 
+  <!-- Footer -->
   <footer>© SpyderGurt 2025</footer>
 
-  <script>
-    window.addEventListener('load', () => document.body.classList.add('loaded'));
+  <!-- Modal -->
+  <div id="shortcutModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <h3 id="modalTitle">Add shortcut</h3>
+      <label for="shortcutName">Name</label>
+      <input id="shortcutName" type="text" placeholder="Shortcut name" />
+      <label for="shortcutURL">URL</label>
+      <input id="shortcutURL" type="url" placeholder="https://example.com" />
+      <label for="shortcutIcon">Icon image URL (optional)</label>
+      <input id="shortcutIcon" type="url" placeholder="https://example.com/icon.png" />
+      <div class="row" style="margin-top:6px;">
+        <button class="btn-cancel" id="modalCancel">Cancel</button>
+        <button class="btn-save" id="modalSave">Done</button>
+      </div>
+    </div>
+  </div>
 
-    document.getElementById('logo').addEventListener('click', () => {
-      window.location.href = "http://spydertacos.space/DragonX_V4.html";
-    });
+<script>
+/* ========== Data & Storage ========== */
+const STORAGE_KEY = "spyderShortcutsV2";
+const DEFAULT_SHORTCUTS = [
+  { name: "Google", url: "https://www.google.com", icon: "https://www.google.com/favicon.ico" },
+  { name: "YouTube", url: "https://www.youtube.com", icon: "https://www.youtube.com/s/desktop/7c23337d/img/favicon_144x144.png" },
+  { name: "Blooket", url: "https://blooket.com", icon: "https://blooket.com/favicon.ico" },
+  { name: "Kahoot", url: "https://kahoot.it", icon: "https://kahoot.it/favicon.ico" },
+  { name: "Wikipedia", url: "https://wikipedia.org", icon: "https://wikipedia.org/static/favicon/wikipedia.ico" },
+  { name: "Discord", url: "https://discord.com", icon: "https://discord.com/favicon.ico" }
+];
 
-    document.getElementById('lucky-btn').addEventListener('click', () => {
-      window.location.href = "https://en.wikipedia.org/wiki/Cheese";
-    });
+function loadShortcuts(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return DEFAULT_SHORTCUTS.slice();
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed)) return DEFAULT_SHORTCUTS.slice();
+    return parsed;
+  }catch(e){ return DEFAULT_SHORTCUTS.slice(); }
+}
+function saveShortcuts(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
 
-    function handleSearch(event) {
-      event.preventDefault();
-      const query = document.getElementById('query').value.trim().toLowerCase();
-      const status = document.getElementById('status');
-      const specialMsg = document.getElementById('special-message');
-      status.textContent = "Searching...";
-      status.classList.add('visible');
+/* ========== Rendering & Interactivity ========== */
+const grid = document.getElementById("shortcutGrid");
 
-      if (query.includes("denaho")) {
-        specialMsg.textContent = "Denaho is better than Elian";
-        specialMsg.classList.add("show");
-        setTimeout(() => specialMsg.classList.add("fade"), 3000);
-        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
-        return;
-      }
-      if (query.includes("new heights academy")) {
-        specialMsg.textContent = "SY 2025-2026";
-        specialMsg.classList.add("show");
-        setTimeout(() => specialMsg.classList.add("fade"), 3000);
-        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
-        return;
-      }
-      if (query.includes("elian") || query === "lower") {
-        specialMsg.textContent = "gurt yo";
-        specialMsg.classList.add("show");
-        setTimeout(() => specialMsg.classList.add("fade"), 3000);
-        setTimeout(() => {
-          specialMsg.classList.remove("show", "fade");
-          specialMsg.textContent = "";
-          status.textContent = "Found!";
-          window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
-        }, 4000);
-        return;
-      }
-      if (query.includes("blox fruits peak")) {
-        window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-        return;
-      }
-      if (query.includes("blooket bot")) {
-        window.location.href = "https://blooketbot.schoolcheats.net/";
-        return;
-      }
-      if (query.includes("the weeknd peak")) {
-        window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
-        return;
-      }
-      if (query.includes("cabrera")) {
-        specialMsg.textContent = "She sucks, don't search that ever again.";
-        specialMsg.classList.add("show");
-        setTimeout(() => specialMsg.classList.add("fade"), 4000);
-        setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; }, 5000);
-        return;
-      }
-      if (query === "do a barrel roll") {
-        document.body.style.animation = "barrelRoll 1s linear";
-        setTimeout(() => document.body.style.animation = "", 1000);
-        return;
-      }
-      if (query === "do a barrel roll x10") {
-        document.body.style.animation = "barrelRoll 0.5s linear infinite";
-        setTimeout(() => document.body.style.animation = "", 5000);
-        return;
-      }
+let shortcuts = loadShortcuts();
+let dragIndex = null;
+let dragElem = null;
 
-      setTimeout(() => {
-        const encoded = encodeURIComponent(query);
-        window.location.href = `https://www.google.com/search?q=${encoded}`;
-      }, 800);
+function makeCard(shortcut, idx){
+  const a = document.createElement("a");
+  a.className = "card";
+  a.draggable = true;
+  a.dataset.index = idx;
+  a.href = shortcut.url;
+  a.target = "_blank";
+  a.setAttribute("aria-label", shortcut.name);
+
+  // icon
+  const iconWrap = document.createElement("div");
+  iconWrap.className = "icon-wrap";
+  const img = document.createElement("img");
+  img.className = "icon";
+  img.src = shortcut.icon || "https://www.google.com/favicon.ico";
+  img.alt = shortcut.name;
+  img.onerror = () => { img.src = "https://www.google.com/favicon.ico"; };
+  iconWrap.appendChild(img);
+
+  // label
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = shortcut.name;
+
+  // menu button
+  const menuBtn = document.createElement("button");
+  menuBtn.className = "menu-btn";
+  menuBtn.innerHTML = "⋯";
+  menuBtn.title = "Options";
+
+  // menu panel
+  const panel = document.createElement("div");
+  panel.className = "menu-panel";
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  panel.appendChild(editBtn);
+  panel.appendChild(deleteBtn);
+
+  // append
+  a.appendChild(iconWrap);
+  a.appendChild(label);
+  a.appendChild(menuBtn);
+  a.appendChild(panel);
+
+  // menu behavior
+  menuBtn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    // toggle panel
+    const visible = panel.style.display === "block";
+    document.querySelectorAll(".menu-panel").forEach(p => p.style.display = "none");
+    panel.style.display = visible ? "none" : "block";
+  });
+
+  // close panel when clicking outside
+  document.addEventListener("click", () => panel.style.display = "none");
+
+  // edit
+  editBtn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    openModal("edit", idx);
+    panel.style.display = "none";
+  });
+
+  // delete
+  deleteBtn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    if(!confirm(`Delete shortcut "${shortcut.name}"?`)) return;
+    shortcuts.splice(idx,1);
+    saveShortcuts(shortcuts);
+    renderShortcuts();
+    panel.style.display = "none";
+  });
+
+  // Drag and drop handlers (HTML5)
+  a.addEventListener("dragstart", (ev) => {
+    dragIndex = Number(a.dataset.index);
+    dragElem = a;
+    a.style.opacity = "0.5";
+    ev.dataTransfer.effectAllowed = "move";
+    try{ ev.dataTransfer.setData("text/plain", "drag"); }catch(e){}
+    // add floaty style
+    a.style.transform = "scale(1.03) translateY(-6px)";
+  });
+  a.addEventListener("dragend", () => {
+    dragIndex = null;
+    dragElem = null;
+    a.style.opacity = "";
+    a.style.transform = "";
+    renderShortcuts(); // final render to ensure state
+  });
+
+  a.addEventListener("dragover", (ev) => {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "move";
+    // show placeholder insertion
+    const target = ev.currentTarget;
+    const targetIndex = Number(target.dataset.index);
+    const rect = target.getBoundingClientRect();
+    const middle = rect.left + rect.width/2;
+    const insertBefore = (ev.clientX < middle);
+    // visually indicate by inserting a placeholder
+    if(!grid.querySelector(".placeholder")){
+      const ph = document.createElement("div");
+      ph.className = "placeholder";
+      ph.innerHTML = "";
+      grid.insertBefore(ph, insertBefore ? target : target.nextSibling);
+    } else {
+      const ph = grid.querySelector(".placeholder");
+      if(insertBefore) grid.insertBefore(ph, target);
+      else grid.insertBefore(ph, target.nextSibling);
     }
-  </script>
+  });
+
+  a.addEventListener("dragleave", (ev) => {
+    // remove placeholder if leaving grid entirely is handled on drop/end
+    // no-op
+  });
+
+  a.addEventListener("drop", (ev) => {
+    ev.preventDefault();
+    const ph = grid.querySelector(".placeholder");
+    if(!ph) return;
+    // determine new index based on placeholder position
+    const children = Array.from(grid.children).filter(c => !c.classList.contains("placeholder"));
+    let newIndex = Array.from(grid.children).indexOf(ph);
+    if(newIndex === -1) newIndex = children.length;
+    // remove placeholder
+    ph.remove();
+    // compute old index from dragIndex
+    if(dragIndex == null) return;
+    const item = shortcuts.splice(dragIndex,1)[0];
+    // adjust newIndex if item removed earlier in list changed index
+    if(newIndex > dragIndex) newIndex = newIndex - 1;
+    shortcuts.splice(newIndex,0,item);
+    saveShortcuts(shortcuts);
+    renderShortcuts();
+  });
+
+  return a;
+}
+
+function renderShortcuts(){
+  grid.innerHTML = "";
+  shortcuts = loadShortcuts();
+  // create cards
+  shortcuts.forEach((s,i) => {
+    const card = makeCard(s,i);
+    grid.appendChild(card);
+  });
+  // Add tile as final card inside grid
+  const addCard = document.createElement("div");
+  addCard.className = "add-tile";
+  addCard.title = "Add shortcut";
+  addCard.innerHTML = `<div style="font-size:26px;line-height:1">+</div><div style="font-size:12px;margin-top:6px;color:var(--muted)">Add</div>`;
+  addCard.addEventListener("click",(ev)=>{
+    ev.preventDefault();
+    openModal("add");
+  });
+  grid.appendChild(addCard);
+
+  // ensure any placeholder removed
+  const ph = grid.querySelector(".placeholder"); if(ph) ph.remove();
+}
+
+/* ========== Modal (Add/Edit) ========== */
+const modalWrap = document.getElementById("shortcutModal");
+const modalTitle = document.getElementById("modalTitle");
+const nameInput = document.getElementById("shortcutName");
+const urlInput = document.getElementById("shortcutURL");
+const iconInput = document.getElementById("shortcutIcon");
+const modalCancel = document.getElementById("modalCancel");
+const modalSave = document.getElementById("modalSave");
+let modalMode = "add"; // or "edit"
+let editIndex = null;
+
+function openModal(mode="add", index=null){
+  modalMode = mode;
+  editIndex = index;
+  if(mode === "add"){
+    modalTitle.textContent = "Add shortcut";
+    nameInput.value=""; urlInput.value=""; iconInput.value="";
+  } else {
+    modalTitle.textContent = "Edit shortcut";
+    const s = shortcuts[index];
+    nameInput.value = s.name || "";
+    urlInput.value = s.url || "";
+    iconInput.value = s.icon || "";
+  }
+  modalWrap.style.display = "flex";
+  modalWrap.classList.add("open");
+  modalWrap.setAttribute("aria-hidden","false");
+  // small focus
+  setTimeout(()=> nameInput.focus(),120);
+}
+
+function closeModal(){
+  modalWrap.classList.remove("open");
+  modalWrap.style.display = "none";
+  modalWrap.setAttribute("aria-hidden","true");
+  editIndex = null;
+  modalMode = "add";
+}
+
+modalCancel.addEventListener("click",(ev)=>{ ev.preventDefault(); closeModal(); });
+modalWrap.addEventListener("click", (ev)=>{ if(ev.target === modalWrap) closeModal(); });
+
+modalSave.addEventListener("click",(ev)=>{
+  ev.preventDefault();
+  const name = nameInput.value.trim();
+  const url = urlInput.value.trim();
+  const icon = iconInput.value.trim() || "https://www.google.com/favicon.ico";
+  if(!name || !url){ alert("Please provide a name and URL."); return; }
+  // ensure URL has protocol
+  let normalizedURL = url;
+  if(!/^https?:\/\//i.test(normalizedURL)) normalizedURL = "https://" + normalizedURL;
+  if(modalMode === "add"){
+    shortcuts.push({ name, url:normalizedURL, icon });
+  } else if(modalMode === "edit" && Number.isInteger(editIndex)){
+    shortcuts[editIndex] = { name, url:normalizedURL, icon };
+  }
+  saveShortcuts(shortcuts);
+  renderShortcuts();
+  closeModal();
+});
+
+/* ========== Add Shortcut button (top-level) ========== */
+document.getElementById("addShortcutBtn").addEventListener("click", ()=> openModal("add"));
+
+/* ========== Logo & Lucky button & initial load ========== */
+const logo = document.getElementById("logo");
+logo.addEventListener("click", ()=> window.location.href = "http://spydertacos.space/DragonX_V4.html");
+
+const luckyBtn = document.getElementById("lucky-btn");
+luckyBtn.addEventListener("click", ()=> window.location.href = "https://en.wikipedia.org/wiki/Cheese");
+
+/* show initial grid on load */
+window.addEventListener("load", ()=>{
+  document.body.classList.add("loaded");
+  renderShortcuts();
+});
+
+/* ========== Search logic (original easter eggs & redirects preserved) ========== */
+function handleSearch(ev){
+  ev.preventDefault();
+  const raw = document.getElementById("query").value || "";
+  const query = raw.trim().toLowerCase();
+  const status = document.getElementById("status");
+  const specialMsg = document.getElementById("special-message");
+  status.textContent = "Searching...";
+  status.classList.add("visible");
+
+  // denaho
+  if(query.includes("denaho")){
+    specialMsg.textContent = "Denaho is better than Elian";
+    specialMsg.classList.add("show");
+    setTimeout(()=> specialMsg.classList.add("fade"), 3000);
+    setTimeout(()=> { specialMsg.classList.remove("show","fade"); specialMsg.textContent=""; status.textContent="Found!"; }, 4000);
+    return;
+  }
+
+  // elian or lower
+  if(query.includes("elian") || query === "lower"){
+    specialMsg.textContent = "gurt yo";
+    specialMsg.classList.add("show");
+    setTimeout(()=> specialMsg.classList.add("fade"), 3000);
+    setTimeout(()=> {
+      specialMsg.classList.remove("show","fade");
+      specialMsg.textContent = "";
+      status.textContent = "Found!";
+      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
+    }, 4000);
+    return;
+  }
+
+  // barrel roll
+  if(query === "do a barrel roll"){
+    document.body.style.animation = "barrelRoll 1s linear";
+    setTimeout(()=> document.body.style.animation = "", 1000);
+    return;
+  }
+
+  // barrel roll x10
+  if(query === "do a barrel roll x10" || query === "do a barrel roll 10"){
+    // spin 10 times without redirect
+    let spins = 0;
+    document.body.style.animation = "barrelRoll 0.6s linear infinite";
+    const iv = setInterval(()=>{
+      spins++;
+      if(spins >= 10){
+        clearInterval(iv);
+        document.body.style.animation = "";
+      }
+    }, 600);
+    return;
+  }
+
+  // special redirects
+  if(query.includes("blox fruits peak") || query === "lower"){
+    window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+    return;
+  }
+
+  if(query.includes("blooket bot")){
+    window.location.href = "https://blooketbot.schoolcheats.net/";
+    return;
+  }
+
+  if(query.includes("kahoot bot")){
+    window.location.href = "https://kahootbot.net";
+    return;
+  }
+
+  if(query.includes("the weeknd peak")){
+    window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
+    return;
+  }
+
+  if(query.includes("cabrera")){
+    specialMsg.textContent = "She sucks, don't search that ever again.";
+    specialMsg.classList.add("show");
+    setTimeout(()=> specialMsg.classList.add("fade"), 4000);
+    setTimeout(()=> { specialMsg.classList.remove("show","fade"); specialMsg.textContent=""; }, 5000);
+    return;
+  }
+
+  // default: fade out then redirect to google search
+  document.body.classList.remove('loaded');
+  document.body.style.transition = "opacity .8s ease";
+  document.body.style.opacity = "0";
+  setTimeout(()=> { status.textContent = "Found!"; }, 600);
+  setTimeout(()=>{
+    const encoded = encodeURIComponent(raw.trim());
+    window.location.href = `https://www.google.com/search?q=${encoded}`;
+  }, 1200);
+}
+</script>
 </body>
 </html>
