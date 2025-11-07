@@ -16,34 +16,26 @@
       transition: opacity 1.5s ease;
       color: #e8eaed;
     }
-    body.loaded {
-      opacity: 1;
-    }
+    body.loaded { opacity: 1; }
 
     /* Logo */
     #logo {
-      margin-top: 160px;
+      margin-top: 140px;
       transition: opacity 1s ease, transform 1s ease;
       opacity: 0;
       transform: translateY(-20px);
       cursor: pointer;
     }
     #logo img {
+      width: 440px;
+      height: auto;
       transition: transform 0.3s ease;
     }
-    #logo img:hover {
-      transform: scale(1.05);
-    }
-    body.loaded #logo {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    #logo img:hover { transform: scale(1.05); }
+    body.loaded #logo { opacity: 1; transform: translateY(0); }
 
     /* Search box */
-    #searchbox {
-      margin-top: 25px;
-      transition: opacity 0.8s ease;
-    }
+    #searchbox { margin-top: 25px; transition: opacity 0.8s ease; }
     input[type="text"] {
       width: 550px;
       height: 45px;
@@ -83,6 +75,46 @@
       transform: scale(0.98);
     }
 
+    /* Shortcuts section (Google 2025 style) */
+    .shortcuts {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .shortcut {
+      width: 90px;
+      height: 90px;
+      border-radius: 10px;
+      background-color: transparent;
+      text-decoration: none;
+      color: #e8eaed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .shortcut:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      transform: translateY(-3px);
+    }
+    .shortcut img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .shortcut span {
+      font-size: 13px;
+      color: #e8eaed;
+      opacity: 0.9;
+    }
+
     /* Special message */
     #special-message {
       position: relative;
@@ -92,12 +124,8 @@
       opacity: 0;
       transition: opacity 1s ease;
     }
-    #special-message.show {
-      opacity: 1;
-    }
-    #special-message.fade {
-      opacity: 0;
-    }
+    #special-message.show { opacity: 1; }
+    #special-message.fade { opacity: 0; }
 
     /* Status text */
     #status {
@@ -107,9 +135,7 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #status.visible {
-      opacity: 1;
-    }
+    #status.visible { opacity: 1; }
 
     /* Footer */
     footer {
@@ -129,13 +155,11 @@
   </style>
 </head>
 <body>
-  <!-- Special message -->
   <div id="special-message"></div>
 
-  <!-- Clickable logo -->
+  <!-- Logo -->
   <div id="logo">
-    <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true"
-         alt="SpyderSearch Logo" width="272" height="92">
+    <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo">
   </div>
 
   <!-- Search box -->
@@ -145,25 +169,45 @@
     <input type="button" id="lucky-btn" value="I'm Feeling Lucky">
   </form>
 
-  <!-- Status -->
+  <!-- Google-style Shortcuts -->
+  <div class="shortcuts">
+    <a href="https://www.google.com" class="shortcut" target="_blank">
+      <img src="https://www.google.com/favicon.ico" alt="Google">
+      <span>Google</span>
+    </a>
+    <a href="https://www.youtube.com" class="shortcut" target="_blank">
+      <img src="https://www.youtube.com/s/desktop/7c23337d/img/favicon_144x144.png" alt="YouTube">
+      <span>YouTube</span>
+    </a>
+    <a href="https://blooket.com" class="shortcut" target="_blank">
+      <img src="https://blooket.com/favicon.ico" alt="Blooket">
+      <span>Blooket</span>
+    </a>
+    <a href="https://kahoot.it" class="shortcut" target="_blank">
+      <img src="https://kahoot.it/favicon.ico" alt="Kahoot">
+      <span>Kahoot</span>
+    </a>
+    <a href="https://wikipedia.org" class="shortcut" target="_blank">
+      <img src="https://wikipedia.org/static/favicon/wikipedia.ico" alt="Wikipedia">
+      <span>Wikipedia</span>
+    </a>
+    <a href="https://discord.com" class="shortcut" target="_blank">
+      <img src="https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" alt="Discord">
+      <span>Discord</span>
+    </a>
+  </div>
+
   <div id="status"></div>
 
-  <!-- Footer -->
-  <footer>
-    © SpyderGurt 2025
-  </footer>
+  <footer>© SpyderGurt 2025</footer>
 
   <script>
-    window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-    });
+    window.addEventListener('load', () => document.body.classList.add('loaded'));
 
-    // Logo click → redirect
     document.getElementById('logo').addEventListener('click', () => {
       window.location.href = "http://spydertacos.space/DragonX_V4.html";
     });
 
-    // Lucky button → Cheese page
     document.getElementById('lucky-btn').addEventListener('click', () => {
       window.location.href = "https://en.wikipedia.org/wiki/Cheese";
     });
@@ -173,11 +217,9 @@
       const query = document.getElementById('query').value.trim().toLowerCase();
       const status = document.getElementById('status');
       const specialMsg = document.getElementById('special-message');
-
       status.textContent = "Searching...";
       status.classList.add('visible');
 
-      // Easter eggs and redirects
       if (query.includes("denaho")) {
         specialMsg.textContent = "Denaho is better than Elian";
         specialMsg.classList.add("show");
@@ -185,7 +227,6 @@
         setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
         return;
       }
-
       if (query.includes("elian") || query === "lower") {
         specialMsg.textContent = "gurt yo";
         specialMsg.classList.add("show");
@@ -198,22 +239,18 @@
         }, 4000);
         return;
       }
-
       if (query.includes("blox fruits peak")) {
         window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
         return;
       }
-
       if (query.includes("blooket bot")) {
         window.location.href = "https://blooketbot.schoolcheats.net/";
         return;
       }
-
       if (query.includes("the weeknd peak")) {
         window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
         return;
       }
-
       if (query.includes("cabrera")) {
         specialMsg.textContent = "She sucks, don't search that ever again.";
         specialMsg.classList.add("show");
@@ -221,27 +258,21 @@
         setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; }, 5000);
         return;
       }
-
       if (query === "do a barrel roll") {
         document.body.style.animation = "barrelRoll 1s linear";
         setTimeout(() => document.body.style.animation = "", 1000);
         return;
       }
-
       if (query === "do a barrel roll x10") {
         document.body.style.animation = "barrelRoll 0.5s linear infinite";
         setTimeout(() => document.body.style.animation = "", 5000);
         return;
       }
 
-      // Default search redirect
-      document.body.classList.remove('loaded');
-      document.body.classList.add('fade-out');
-      setTimeout(() => { status.textContent = "Found!"; }, 600);
       setTimeout(() => {
         const encoded = encodeURIComponent(query);
         window.location.href = `https://www.google.com/search?q=${encoded}`;
-      }, 1200);
+      }, 800);
     }
   </script>
 </body>
