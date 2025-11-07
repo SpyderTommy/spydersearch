@@ -2,158 +2,163 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SpyderSearch</title>
-<link rel="icon" href="https://www.google.com/favicon.ico" type="image/x-icon">
+<title>SpyderSearch 2025</title>
+<link rel="icon" href="favicon.png" type="image/png">
 <style>
-/* --- Modern Google-like Styling --- */
-body {
-  background-color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-body.loaded { opacity: 1; }
+  /* General Page Styles */
+  body {
+    background-color: #fff;
+    font-family: "Google Sans", Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
 
-/* Centered layout */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
+  body.loaded {
+    opacity: 1;
+  }
 
-/* Logo */
-#logo img {
-  width: 272px;
-  height: auto;
-  margin-bottom: 30px;
-  transition: transform 0.4s ease;
-}
-#logo img:hover {
-  transform: scale(1.05);
-}
+  /* Logo */
+  #logo {
+    margin-top: 13vh;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  body.loaded #logo {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #logo img {
+    width: 272px;
+    height: auto;
+  }
 
-/* Search box */
-#searchbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-input[type="text"] {
-  width: 550px;
-  height: 45px;
-  border: 1px solid #dadce0;
-  border-radius: 24px;
-  font-size: 16px;
-  padding: 0 20px;
-  box-shadow: none;
-  outline: none;
-  transition: box-shadow 0.2s ease;
-}
-input[type="text"]:hover, input[type="text"]:focus {
-  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
-  border-color: rgba(223,225,229,0);
-}
+  /* Search box */
+  #searchbox {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-/* Buttons */
-.button-row {
-  margin-top: 25px;
-}
-input[type="submit"] {
-  background-color: #f8f9fa;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  color: #3c4043;
-  font-size: 14px;
-  padding: 10px 18px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-input[type="submit"]:hover {
-  background-color: #f8f9fa;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-  border-color: #dadce0;
-}
+  input[type="text"] {
+    width: 580px;
+    max-width: 90%;
+    height: 45px;
+    font-size: 16px;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px;
+    padding: 0 45px 0 20px;
+    box-shadow: none;
+    outline: none;
+    transition: box-shadow 0.2s ease, border 0.2s ease;
+  }
+  input[type="text"]:hover, input[type="text"]:focus {
+    border-color: #dcdcdc;
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  }
 
-/* Special message */
-#special-message {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #202124;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-#special-message.show { opacity: 1; }
-#special-message.fade { opacity: 0; }
+  input[type="submit"] {
+    margin: 30px 5px 0 5px;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid #f8f9fa;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #3c4043;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
 
-/* Footer */
-footer {
-  position: fixed;
-  bottom: 15px;
-  width: 100%;
-  font-size: 14px;
-  color: #70757a;
-}
-footer a {
-  color: #70757a;
-  text-decoration: none;
-  margin: 0 10px;
-}
-footer a:hover { text-decoration: underline; }
+  input[type="submit"]:hover {
+    border-color: #dadce0;
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  }
 
-/* Status */
-#status {
-  margin-top: 20px;
-  font-size: 15px;
-  color: #5f6368;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-#status.visible { opacity: 1; }
+  /* Special message */
+  #special-message {
+    font-size: 18px;
+    color: #333;
+    margin-top: 15px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  #special-message.show {
+    opacity: 1;
+  }
+  #special-message.fade {
+    opacity: 0;
+  }
 
-/* Barrel roll animation */
-@keyframes barrelRoll {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+  /* Status */
+  #status {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #555;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #status.visible {
+    opacity: 1;
+  }
+
+  /* Footer */
+  footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    font-size: 13px;
+    color: #70757a;
+  }
+
+  footer a {
+    color: #1a0dab;
+    text-decoration: none;
+    margin: 0 5px;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* Barrel roll */
+  @keyframes barrelRoll {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 </style>
 </head>
+
 <body>
-<div class="container">
+  <!-- Special message -->
+  <div id="special-message"></div>
+
   <!-- Logo -->
   <div id="logo">
-    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="SpyderSearch Logo">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo">
   </div>
 
   <!-- Search box -->
   <form id="searchbox" onsubmit="handleSearch(event)">
-    <input type="text" id="query" placeholder="Search SpyderSearch or type a URL" name="q" autocomplete="off">
-    <div class="button-row">
-      <input type="submit" value="SpyderSearch">
+    <input type="text" id="query" placeholder="Search SpyderSearch..." name="q" autocomplete="off"><br>
+    <div>
+      <input type="submit" value="Spyder Search">
       <input type="submit" value="I'm Feeling Lucky">
     </div>
   </form>
 
-  <!-- Special message -->
-  <div id="special-message"></div>
-
   <!-- Status -->
   <div id="status"></div>
-</div>
 
-<!-- Footer -->
-<footer>
-  <a href="#">About</a>
-  <a href="#">Advertising</a>
-  <a href="#">Business</a>
-  <a href="#">Privacy</a>
-  <a href="#">Terms</a>
-</footer>
+  <!-- Footer -->
+  <footer>
+    <a href="#">About</a> | 
+    <a href="#">Privacy</a> | 
+    <a href="#">Terms</a>
+  </footer>
 
 <script>
 window.addEventListener('load', () => {
@@ -165,20 +170,15 @@ function handleSearch(event) {
   const query = document.getElementById('query').value.trim().toLowerCase();
   const status = document.getElementById('status');
   const specialMsg = document.getElementById('special-message');
-
   status.textContent = "Searching...";
   status.classList.add('visible');
 
-  // --- Easter Eggs ---
+  // Easter eggs
   if (query.includes("denaho")) {
     specialMsg.textContent = "Denaho is better than Elian";
     specialMsg.classList.add("show");
     setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-      status.textContent = "Found!";
-    }, 4000);
+    setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
     return;
   }
 
@@ -186,11 +186,11 @@ function handleSearch(event) {
     specialMsg.textContent = "gurt yo";
     specialMsg.classList.add("show");
     setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-      status.textContent = "Found!";
-      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
+    setTimeout(() => { 
+      specialMsg.classList.remove("show", "fade"); 
+      specialMsg.textContent = ""; 
+      status.textContent = "Found!"; 
+      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"; 
     }, 4000);
     return;
   }
@@ -201,25 +201,21 @@ function handleSearch(event) {
     return;
   }
 
-  if (query === "do a barrel roll x10") {
-    document.body.style.animation = "barrelRoll 0.3s linear infinite";
-    setTimeout(() => document.body.style.animation = "", 3000);
+  if (query === "do a barrel roll x10" || query === "do a barrel roll 10") {
+    document.body.style.animation = "barrelRoll 1s linear infinite";
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      if (count >= 10) {
+        clearInterval(interval);
+        document.body.style.animation = "";
+      }
+    }, 1000);
     return;
   }
 
-  if (query.includes("blox fruits peak")) {
+  if (query.includes("blox fruits peak") || query === "lower") {
     window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-    return;
-  }
-
-  if (query.includes("cabrera")) {
-    specialMsg.textContent = "She sucks, don't search that ever again.";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 4000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-    }, 5000);
     return;
   }
 
@@ -228,269 +224,23 @@ function handleSearch(event) {
     return;
   }
 
-  if (query.includes("the weeknd peak")) {
-    window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
-    return;
-  }
-
-  if (query.includes("blooket cheats")) {
-    window.location.href = "https://blooketbot.schoolcheats.net";
-    return;
-  }
-
-  // --- Normal Search Redirect ---
-  const encoded = encodeURIComponent(query);
-  window.location.href = `https://www.google.com/search?q=${encoded}`;
-}
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>SpyderSearch BETA</title>
-<link rel="icon" href="favicon.png" type="image/png">
-<style>
-/* General page styles */
-body {
-  background-color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 1.5s ease;
-}
-body.loaded { opacity: 1; }
-
-/* Password overlay */
-#password-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: #f0f0f0 url('https://i.imgur.com/4NZ6uLY.png') no-repeat center center;
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  transition: opacity 1s ease;
-}
-#password-overlay.fade-out { opacity: 0; pointer-events: none; }
-#password-overlay input[type="password"] {
-  font-size: 18px; padding: 8px; width: 250px; margin-bottom: 10px;
-}
-#password-overlay input[type="submit"] {
-  padding: 6px 12px; font-size: 16px; cursor: pointer;
-}
-#password-error { color: red; margin-top: 10px; font-size: 14px; }
-
-/* Logo and search box */
-#logo {
-  margin-top: 100px;
-  transition: opacity 1s ease, transform 1s ease;
-  opacity: 0; transform: translateY(-20px);
-}
-body.loaded #logo { opacity: 1; transform: translateY(0); }
-
-#searchbox { margin-top: 20px; transition: opacity 0.8s ease; }
-input[type="text"] {
-  width: 400px; height: 25px;
-  font-size: 16px;
-  border: 1px solid #dcdcdc;
-  padding: 5px;
-}
-input[type="submit"] {
-  margin-top: 20px; font-size: 14px;
-  padding: 5px 12px;
-  border: 1px solid #dcdcdc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-input[type="submit"]:hover { border-color: #999; background-color: #efefef; }
-
-footer {
-  position: fixed; bottom: 20px;
-  width: 100%;
-  font-size: 12px; color: #555; opacity: 0.8;
-}
-a { color: #0000cc; text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-.fade-out { opacity: 0; transition: opacity 0.8s ease; }
-
-/* Search status text */
-#status { margin-top: 20px; font-size: 16px; color: #555; opacity: 0; transition: opacity 0.5s ease; }
-#status.visible { opacity: 1; }
-
-/* Special message above logo */
-#special-message {
-  position: relative;
-  top: 60px;
-  font-size: 20px;
-  color: #333;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-#special-message.show { opacity: 1; }
-#special-message.fade { opacity: 0; }
-
-/* Barrel roll animation */
-@keyframes barrelRoll {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-</style>
-</head>
-<body>
-
-<!-- Password overlay -->
-<div id="password-overlay">
-  <h2>Enter Owner Password to Access SpyderSearch BETA</h2>
-  <form id="password-form">
-    <input type="password" id="password-input" placeholder="Password"><br>
-    <input type="submit" value="Unlock">
-  </form>
-  <div id="password-error"></div>
-</div>
-
-<!-- Special message -->
-<div id="special-message"></div>
-
-<!-- Logo -->
-<div id="logo">
-  <img src="https://www.google.com/logos/1998/googlebeta.jpg" alt="Google 1998 Logo" width="351" height="113">
-</div>
-
-<!-- Search box -->
-<form id="searchbox" onsubmit="handleSearch(event)">
-  <input type="text" id="query" placeholder="Search the web..." name="q" autocomplete="off"><br>
-  <input type="submit" value="Google Search">
-  <input type="submit" value="I'm Feeling Lucky">
-</form>
-
-<!-- Status -->
-<div id="status"></div>
-
-<!-- Footer -->
-<footer>
-  <a href="#">Advertising</a> | <a href="#">Business Solutions</a> | <a href="#">About Google</a><br>
-  © 2000 Google
-</footer>
-
-<script>
-const PASSWORD = "heights1818!$";
-
-window.addEventListener('load', () => {
-  if (localStorage.getItem('spyder-unlocked') === 'true') {
-    document.getElementById('password-overlay').classList.add('fade-out');
-    document.body.classList.add('loaded');
-  }
-  document.body.classList.add('loaded');
-});
-
-// Handle password submission
-document.getElementById('password-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const input = document.getElementById('password-input').value;
-  const overlay = document.getElementById('password-overlay');
-  const error = document.getElementById('password-error');
-  if (input === PASSWORD) {
-    overlay.classList.add('fade-out');
-    localStorage.setItem('spyder-unlocked', 'true');
-  } else {
-    error.textContent = "Incorrect password!";
-  }
-});
-
-function handleSearch(event) {
-  event.preventDefault();
-  const query = document.getElementById('query').value.trim().toLowerCase();
-  const status = document.getElementById('status');
-  const specialMsg = document.getElementById('special-message');
-
-  status.textContent = "Searching...";
-  status.classList.add('visible');
-
-  // --- Easter Eggs ---
-  if (query.includes("denaho")) {
-    specialMsg.textContent = "Denaho is better than Elian";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-      status.textContent = "Found!";
-    }, 4000);
-    return;
-  }
-
-  if (query.includes("elian") || query === "lower") {
-    specialMsg.textContent = "gurt yo";
-    specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 3000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-      status.textContent = "Found!";
-      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
-    }, 4000);
-    return;
-  }
-
-  // Barrel roll
-  if (query === "do a barrel roll") {
-    document.body.style.animation = "barrelRoll 1s linear";
-    setTimeout(() => document.body.style.animation = "", 1000);
-    return;
-  }
-
-  // Barrel roll X10
-  if (query === "do a barrel roll x10") {
-    document.body.style.animation = "barrelRoll 0.3s linear infinite";
-    setTimeout(() => document.body.style.animation = "", 3000);
-    return;
-  }
-
-  // BLOX FRUITS PEAK
-  if (query.includes("blox fruits peak")) {
-    window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-    return;
-  }
-
-  // CABRERA
   if (query.includes("cabrera")) {
     specialMsg.textContent = "She sucks, don't search that ever again.";
     specialMsg.classList.add("show");
-    setTimeout(() => specialMsg.classList.add("fade"), 4000);
-    setTimeout(() => {
-      specialMsg.classList.remove("show", "fade");
-      specialMsg.textContent = "";
-    }, 5000);
+    setTimeout(() => specialMsg.classList.remove("show"), 4000);
     return;
   }
 
-  // --- Regular redirect behavior ---
-  document.body.classList.remove('loaded');
-  document.body.classList.add('fade-out');
-
-  setTimeout(() => { status.textContent = "Found!"; }, 600);
+  // Default search
+  setTimeout(() => {
+    status.textContent = "Found!";
+  }, 600);
 
   setTimeout(() => {
-    if (query.includes('the weeknd peak')) {
-      window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
-    } else if (query.includes('blooket cheats')) {
-      window.location.href = "https://blooketbot.schoolcheats.net";
-    } else {
-      const encoded = encodeURIComponent(query);
-      window.location.href = `https://www.google.com/search?q=${encoded}`;
-    }
+    const encoded = encodeURIComponent(query);
+    window.location.href = `https://www.google.com/search?q=${encoded}`;
   }, 1200);
 }
 </script>
-
 </body>
 </html>
