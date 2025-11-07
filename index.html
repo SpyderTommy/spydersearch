@@ -2,6 +2,253 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>SpyderSearch</title>
+<link rel="icon" href="https://www.google.com/favicon.ico" type="image/x-icon">
+<style>
+/* --- Modern Google-like Styling --- */
+body {
+  background-color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+body.loaded { opacity: 1; }
+
+/* Centered layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+/* Logo */
+#logo img {
+  width: 272px;
+  height: auto;
+  margin-bottom: 30px;
+  transition: transform 0.4s ease;
+}
+#logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Search box */
+#searchbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+input[type="text"] {
+  width: 550px;
+  height: 45px;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  font-size: 16px;
+  padding: 0 20px;
+  box-shadow: none;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+}
+input[type="text"]:hover, input[type="text"]:focus {
+  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+  border-color: rgba(223,225,229,0);
+}
+
+/* Buttons */
+.button-row {
+  margin-top: 25px;
+}
+input[type="submit"] {
+  background-color: #f8f9fa;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  color: #3c4043;
+  font-size: 14px;
+  padding: 10px 18px;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+input[type="submit"]:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-color: #dadce0;
+}
+
+/* Special message */
+#special-message {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #202124;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#special-message.show { opacity: 1; }
+#special-message.fade { opacity: 0; }
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 15px;
+  width: 100%;
+  font-size: 14px;
+  color: #70757a;
+}
+footer a {
+  color: #70757a;
+  text-decoration: none;
+  margin: 0 10px;
+}
+footer a:hover { text-decoration: underline; }
+
+/* Status */
+#status {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #5f6368;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#status.visible { opacity: 1; }
+
+/* Barrel roll animation */
+@keyframes barrelRoll {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Logo -->
+  <div id="logo">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="SpyderSearch Logo">
+  </div>
+
+  <!-- Search box -->
+  <form id="searchbox" onsubmit="handleSearch(event)">
+    <input type="text" id="query" placeholder="Search SpyderSearch or type a URL" name="q" autocomplete="off">
+    <div class="button-row">
+      <input type="submit" value="SpyderSearch">
+      <input type="submit" value="I'm Feeling Lucky">
+    </div>
+  </form>
+
+  <!-- Special message -->
+  <div id="special-message"></div>
+
+  <!-- Status -->
+  <div id="status"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <a href="#">About</a>
+  <a href="#">Advertising</a>
+  <a href="#">Business</a>
+  <a href="#">Privacy</a>
+  <a href="#">Terms</a>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+  document.body.classList.add('loaded');
+});
+
+function handleSearch(event) {
+  event.preventDefault();
+  const query = document.getElementById('query').value.trim().toLowerCase();
+  const status = document.getElementById('status');
+  const specialMsg = document.getElementById('special-message');
+
+  status.textContent = "Searching...";
+  status.classList.add('visible');
+
+  // --- Easter Eggs ---
+  if (query.includes("denaho")) {
+    specialMsg.textContent = "Denaho is better than Elian";
+    specialMsg.classList.add("show");
+    setTimeout(() => specialMsg.classList.add("fade"), 3000);
+    setTimeout(() => {
+      specialMsg.classList.remove("show", "fade");
+      specialMsg.textContent = "";
+      status.textContent = "Found!";
+    }, 4000);
+    return;
+  }
+
+  if (query.includes("elian") || query === "lower") {
+    specialMsg.textContent = "gurt yo";
+    specialMsg.classList.add("show");
+    setTimeout(() => specialMsg.classList.add("fade"), 3000);
+    setTimeout(() => {
+      specialMsg.classList.remove("show", "fade");
+      specialMsg.textContent = "";
+      status.textContent = "Found!";
+      window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
+    }, 4000);
+    return;
+  }
+
+  if (query === "do a barrel roll") {
+    document.body.style.animation = "barrelRoll 1s linear";
+    setTimeout(() => document.body.style.animation = "", 1000);
+    return;
+  }
+
+  if (query === "do a barrel roll x10") {
+    document.body.style.animation = "barrelRoll 0.3s linear infinite";
+    setTimeout(() => document.body.style.animation = "", 3000);
+    return;
+  }
+
+  if (query.includes("blox fruits peak")) {
+    window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+    return;
+  }
+
+  if (query.includes("cabrera")) {
+    specialMsg.textContent = "She sucks, don't search that ever again.";
+    specialMsg.classList.add("show");
+    setTimeout(() => specialMsg.classList.add("fade"), 4000);
+    setTimeout(() => {
+      specialMsg.classList.remove("show", "fade");
+      specialMsg.textContent = "";
+    }, 5000);
+    return;
+  }
+
+  if (query.includes("kahoot bot")) {
+    window.location.href = "https://kahootbot.net";
+    return;
+  }
+
+  if (query.includes("the weeknd peak")) {
+    window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0";
+    return;
+  }
+
+  if (query.includes("blooket cheats")) {
+    window.location.href = "https://blooketbot.schoolcheats.net";
+    return;
+  }
+
+  // --- Normal Search Redirect ---
+  const encoded = encodeURIComponent(query);
+  window.location.href = `https://www.google.com/search?q=${encoded}`;
+}
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <title>SpyderSearch BETA</title>
 <link rel="icon" href="favicon.png" type="image/png">
 <style>
