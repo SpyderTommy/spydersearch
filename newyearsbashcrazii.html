@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NEW YEAR'S BASH 2026</title>
+
+  <!-- Roboto -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b0b0d;
+      --panel:#0f1012;
+      --muted:#9aa0a6;
+      --accent:#1f6fff;
+      --accent-2:#1247c6;
+      --card:#0b0c0e;
+      --border:rgba(255,255,255,0.04);
+      --glass: rgba(255,255,255,0.02);
+      --radius:10px;
+      --max-width:930px;
+      font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Arial;
+      color: #e6e9ee;
+    }
+
+    html,body{height:100%;margin:0;}
+    body{
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(28,36,72,0.12), transparent 10%),
+        linear-gradient(180deg, #050507 0%, #0b0b0d 40%, #0f1113 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
+      padding-bottom:60px;
+    }
+
+    /* Container centers the content like the screenshots */
+    .page {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    /* HERO */
+    header.hero {
+      padding: 72px 20px 36px;
+      text-align:center;
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+    }
+    .logo {
+      width:72px;
+      height:72px;
+      border-radius:10px;
+      background: linear-gradient(135deg,#12203a 0%, #0b1a32 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 -6px 20px rgba(255,255,255,0.02);
+    }
+    .logo img{ width:46px; height:46px; object-fit:cover; display:block; filter:brightness(1.1) saturate(1.2); }
+
+    h1.title {
+      font-size: clamp(28px, 5vw, 56px);
+      line-height:1;
+      margin: 0 0 10px 0;
+      font-weight:900;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color:var(--muted);
+      font-weight:400;
+      margin-bottom:18px;
+      font-size:14px;
+    }
+
+    .hero-ctas {
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-top:12px;
+    }
+    .btn {
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(31,111,255,0.18);
+      padding:10px 14px;
+      border-radius:8px;
+      font-weight:700;
+      font-size:13px;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .btn:active{ transform:translateY(1px); }
+    .btn.primary {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #01030a;
+      border: none;
+      box-shadow: 0 6px 26px rgba(18,71,198,0.14);
+    }
+
+    /* SCHEDULE SECTION (center narrow column) */
+    main#main {
+      display:flex;
+      justify-content:center;
+      padding: 20px;
+    }
+
+    .center-column {
+      width:100%;
+      max-width:720px; /* narrow center column similar to screenshots */
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+    }
+
+    .section-head {
+      text-align:center;
+      margin-bottom:18px;
+    }
+    .section-head h2 {
+      font-size:18px;
+      margin:0 0 6px 0;
+      font-weight:700;
+      color:#dfe6f3;
+    }
+    .section-head p { margin:0; font-size:13px; color:var(--muted); }
+
+    /* Day header / collapsed black bar */
+    .day-bar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#000;
+      padding:10px 12px;
+      border-radius:6px;
+      border:1px solid var(--border);
+      margin-top:14px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .day-bar .left { font-weight:700; font-size:13px; color:#dfe6f3; }
+    .day-bar .right { font-size:12px; color:var(--muted); }
+
+    /* Each schedule row */
+    .schedule {
+      margin-top:12px;
+      border-radius:6px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .session {
+      display:grid;
+      grid-template-columns: 110px 1fr 120px;
+      gap:18px;
+      padding:14px 16px;
+      align-items:center;
+      border-bottom:1px solid rgba(255,255,255,0.02);
+      background: linear-gradient(180deg, rgba(255,255,255,0.006), transparent);
+    }
+
+    .session:last-child { border-bottom: none; }
+
+    .session .time {
+      color:var(--muted);
+      font-size:13px;
+      font-weight:600;
+      opacity:0.95;
+    }
+    .session .event-title {
+      font-weight:600;
+      color:#dfe6f3;
+      font-size:14px;
+    }
+    .session .meta {
+      text-align:right;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* thin separators like screenshot */
+    .divider {
+      height:1px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      margin:12px 0;
+    }
+
+    /* In-page smaller CTA */
+    .inspire-box {
+      margin-top:20px;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(255,255,255,0.006), transparent);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .inspire-box .left { color:var(--muted); font-size:13px; }
+    .inspire-box .right .btn { padding:8px 12px; font-size:13px; }
+
+    /* Speakers section (bottom) */
+    .speakers-outer {
+      margin-top:48px;
+      padding:40px 28px;
+      background: linear-gradient(180deg, rgba(10,14,24,0.6), rgba(4,6,10,0.85));
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    .speakers-head { text-align:center; margin-bottom:18px; }
+    .speaker-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap:20px;
+      align-items:start;
+    }
+
+    .speaker {
+      text-align:center;
+      padding:12px;
+      border-radius:8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .avatar {
+      width:88px;
+      height:88px;
+      margin:0 auto 12px;
+      border-radius:50%;
+      background: linear-gradient(135deg,#1f6fff 0%, #1247c6 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#fff;
+      font-size:22px;
+    }
+    .speaker .name { font-weight:700; margin-bottom:6px; color:#e9eefc; }
+    .speaker .role { font-size:13px; color:var(--muted); margin-bottom:10px; }
+
+    .join-discord {
+      display:flex;
+      justify-content:center;
+      margin-top:18px;
+    }
+    .join-discord .btn.secondary {
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(31,111,255,0.16);
+      padding:9px 14px;
+      border-radius:8px;
+      font-weight:700;
+    }
+
+    footer {
+      margin-top:36px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      padding:30px 10px 80px;
+    }
+
+    /* responsiveness tweaks */
+    @media (max-width:720px){
+      .session { grid-template-columns: 1fr; text-align:left; gap:8px; }
+      .session .meta { text-align:left; }
+      .center-column { padding: 18px 12px 40px; }
+      .hero { padding:56px 12px 26px; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <!-- placeholder logo: you can replace with <img src="logo.png"> -->
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="22" height="22" rx="6" fill="#0b1a32"/>
+            <path d="M6 12 L10 8 L14 16 L18 10" stroke="#6cc2ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="title">NEW YEAR'S BASH 2026</h1>
+      <div class="subtitle">Join live workshops, chats, and performances — ring in 2026 with the community.</div>
+
+      <div class="hero-ctas" style="margin-top:18px;">
+        <button class="btn primary" onclick="location.href='https://youtube.com/live/3Uqm0GvpcXM'">REGISTER NOW</button>
+        <button class="btn" onclick="document.getElementById('schedule').scrollIntoView({behavior:'smooth'})">SCHEDULE</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="center-column" role="main">
+
+        <!-- Schedule section -->
+        <section id="schedule">
+          <div class="section-head">
+            <h2>Schedule</h2>
+            <p>Join our workshops and live sessions. Check out the full schedule below and find sessions for your timezone.</p>
+          </div>
+
+          <!-- Day header -->
+          <div class="day-bar">
+            <div class="left">Day 1 — Jan 1</div>
+            <div class="right">NEXT DAY ›</div>
+          </div>
+
+          <!-- schedule list -->
+          <div class="schedule" aria-live="polite">
+
+            <div class="session">
+              <div class="time">6:00 PM PST</div>
+              <div>
+                <div class="event-title">Opening Ceremony & Countdown</div>
+                <div class="event-desc" style="color:var(--muted); font-size:13px; margin-top:6px;">Hosts: DJ Blaze • Neon Nights</div>
+              </div>
+              <div class="meta">@DJBlaze</div>
+            </div>
+
+            <div class="session">
+              <div class="time">7:00 PM PST</div>
+              <div>
+                <div class="event-title">Live Music & Fireworks</div>
+                <div class="event-desc" style="color:var(--muted); font-size:13px; margin-top:6px;">Performance by Neon Nights</div>
+              </div>
+              <div class="meta">@NeonNights</div>
+            </div>
+
+            <div class="session">
+              <div class="time">8:00 PM PST</div>
+              <div>
+                <div class="event-title">Creator Showcase</div>
+                <div class="event-desc" style="color:var(--muted); font-size:13px; margin-top:6px;">Spotlight on community creators</div>
+              </div>
+              <div class="meta">@Community</div>
+            </div>
+
+            <div class="session">
+              <div class="time">11:50 PM PST</div>
+              <div>
+                <div class="event-title">Final Warm-up</div>
+                <div class="event-desc" style="color:var(--muted); font-size:13px; margin-top:6px;">DJ sets and countdown prep</div>
+              </div>
+              <div class="meta">@WarmUp</div>
+            </div>
+
+            <div class="session">
+              <div class="time">Midnight</div>
+              <div>
+                <div class="event-title">New Year Countdown</div>
+                <div class="event-desc" style="color:var(--muted); font-size:13px; margin-top:6px;">Celebrate 2026 together!</div>
+              </div>
+              <div class="meta">@All</div>
+            </div>
+
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="inspire-box">
+            <div class="left">Inspire Challenge — share your work and join the community challenge.</div>
+            <div class="right"><button class="btn">Learn More</button></div>
+          </div>
+
+          <!-- Speakers -->
+          <div class="speakers-outer" style="margin-top:26px;">
+            <div class="speakers-head">
+              <div style="font-size:13px; color:var(--muted); font-weight:600; letter-spacing:1px;">COMMUNITY</div>
+              <h2 style="margin-top:6px; margin-bottom:4px;">Coffee Chats</h2>
+              <div style="color:var(--muted); font-size:13px; max-width:560px; margin:0 auto;">Join casual chats with creators and community hosts for networking, Q&A, and game collabs.</div>
+            </div>
+
+            <div class="speaker-grid" style="margin-top:22px;">
+              <div class="speaker">
+                <div class="avatar">IB</div>
+                <div class="name">ItzAzurelz</div>
+                <div class="role">Aug 5 • 10 AM PT • EN</div>
+              </div>
+
+              <div class="speaker">
+                <div class="avatar">FL</div>
+                <div class="name">Florianne10</div>
+                <div class="role">Aug 5 • 6 PM CET • FR</div>
+              </div>
+
+              <div class="speaker">
+                <div class="avatar">MM</div>
+                <div class="name">Mimi_Dev</div>
+                <div class="role">Aug 7 • 2 PM PT • EN</div>
+              </div>
+            </div>
+
+            <div class="join-discord">
+              <button class="btn secondary">JOIN THE DISCORD COMMUNITY</button>
+            </div>
+          </div>
+
+        </section>
+
+        <footer>
+          © 2026 NEW YEAR'S BASH — All rights reserved.
+        </footer>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Simple JS to demonstrate "NEXT DAY" toggling (sample only)
+    (function(){
+      const dayBarRight = document.querySelector('.day-bar .right');
+      const days = [
+        { label: 'Day 1 — Jan 1', sessions: [] },
+        { label: 'Day 2 — Jan 2', sessions: [] },
+        { label: 'Day 3 — Jan 3', sessions: [] },
+      ];
+      let idx = 0;
+      dayBarRight.addEventListener('click', () => {
+        idx = (idx + 1) % days.length;
+        document.querySelector('.day-bar .left').textContent = days[idx].label;
+        // in a real setup you'd replace sessions; this demo leaves the sample sessions static
+      });
+    })();
+  </script>
+</body>
+</html>
