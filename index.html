@@ -5,15 +5,16 @@
   <title>SpyderSearch</title>
   <link rel="icon" href="favicon.png" type="image/png">
   <style>
-    /* Base styling */
+    /* Base styling (Dark Mode) */
     body {
-      background-color: #fff;
+      background-color: #121212;
       font-family: 'Arial', sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
       opacity: 0;
       transition: opacity 1.5s ease;
+      color: #e8eaed;
     }
     body.loaded {
       opacity: 1;
@@ -39,30 +40,40 @@
     input[type="text"] {
       width: 550px;
       height: 45px;
-      border: 1px solid #dfe1e5;
+      border: 1px solid #3c4043;
       border-radius: 25px;
       padding: 0 20px;
       font-size: 16px;
       outline: none;
-      transition: box-shadow 0.2s ease;
+      background-color: #202124;
+      color: #e8eaed;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
     }
     input[type="text"]:focus {
-      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      box-shadow: 0 0 6px rgba(255,255,255,0.2);
+      border-color: #8ab4f8;
     }
-    input[type="submit"] {
+    input[type="submit"],
+    input[type="button"] {
       margin-top: 20px;
       margin: 6px;
       font-size: 14px;
       padding: 10px 24px;
-      border: 1px solid #dfe1e5;
-      background-color: #f8f9fa;
+      border: 1px solid #3c4043;
+      background-color: #303134;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
+      color: #e8eaed;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     }
-    input[type="submit"]:hover {
-      background-color: #f1f3f4;
-      border-color: #dadce0;
+    input[type="submit"]:hover,
+    input[type="button"]:hover {
+      background-color: #3c4043;
+      border-color: #5f6368;
+    }
+    input[type="submit"]:active,
+    input[type="button"]:active {
+      transform: scale(0.98);
     }
 
     /* Special message */
@@ -70,7 +81,7 @@
       position: relative;
       top: 80px;
       font-size: 20px;
-      color: #202124;
+      color: #e8eaed;
       opacity: 0;
       transition: opacity 1s ease;
     }
@@ -85,7 +96,7 @@
     #status {
       margin-top: 25px;
       font-size: 16px;
-      color: #5f6368;
+      color: #9aa0a6;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
@@ -99,7 +110,7 @@
       bottom: 20px;
       width: 100%;
       font-size: 13px;
-      color: #5f6368;
+      color: #9aa0a6;
       opacity: 0.8;
     }
 
