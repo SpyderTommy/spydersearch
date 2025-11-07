@@ -21,10 +21,7 @@
       transition: background 0.5s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     #logo {
       width: 320px;
@@ -68,7 +65,6 @@
       padding: 10px 20px;
       transition: box-shadow 0.3s;
     }
-
     #search-box:hover { box-shadow: 0 0 10px #333; }
 
     #search {
@@ -93,29 +89,36 @@
       font-size: 14px;
       transition: background-color 0.3s, transform 0.2s;
     }
-
     button:hover {
       background-color: #3a3a3a;
       transform: translateY(-2px);
     }
 
+    /* Google-style shortcuts */
     #shortcuts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 30px;
       width: 600px;
-      margin-top: 50px;
+      margin-top: 60px;
       justify-items: center;
+      text-align: center;
     }
 
     .shortcut {
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       color: #ddd;
-      cursor: pointer;
-      transition: transform 0.3s;
+      cursor: grab;
+      transition: transform 0.2s, background 0.3s;
+      user-select: none;
     }
 
-    .shortcut:hover { transform: scale(1.05); }
+    .shortcut:active {
+      cursor: grabbing;
+      transform: scale(0.95);
+    }
 
     .shortcut img {
       width: 50px;
@@ -123,6 +126,17 @@
       border-radius: 50%;
       margin-bottom: 8px;
       object-fit: cover;
+      background-color: #2a2a2a;
+      border: 2px solid #333;
+      transition: transform 0.2s;
+    }
+
+    .shortcut:hover img { transform: scale(1.1); }
+
+    .shortcut span {
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 3px;
     }
 
     #add-shortcut {
@@ -130,7 +144,10 @@
       flex-direction: column;
       align-items: center;
       cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s;
     }
+    #add-shortcut:hover { opacity: 1; }
 
     #add-shortcut div {
       width: 50px;
@@ -142,6 +159,7 @@
       align-items: center;
       font-size: 28px;
       color: #aaa;
+      border: 2px solid #444;
     }
 
     #add-shortcut span {
@@ -189,13 +207,30 @@
 
     function renderShortcuts() {
       shortcutsContainer.innerHTML = '';
-      shortcuts.forEach(sc => {
+      shortcuts.forEach((sc, i) => {
         const div = document.createElement('div');
         div.className = 'shortcut';
-        div.innerHTML = `<img src="${sc.img}" alt=""><div>${sc.name}</div>`;
+        div.draggable = true;
+        div.innerHTML = `<img src="${sc.img}" alt=""><span>${sc.name}</span>`;
         div.onclick = () => window.open(sc.url, '_blank');
+
+        // drag-and-drop reordering
+        div.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('index', i);
+        });
+        div.addEventListener('dragover', e => e.preventDefault());
+        div.addEventListener('drop', e => {
+          const from = e.dataTransfer.getData('index');
+          const to = i;
+          const item = shortcuts.splice(from, 1)[0];
+          shortcuts.splice(to, 0, item);
+          localStorage.setItem('spyderShortcuts', JSON.stringify(shortcuts));
+          renderShortcuts();
+        });
+
         shortcutsContainer.appendChild(div);
       });
+
       const addDiv = document.createElement('div');
       addDiv.id = 'add-shortcut';
       addDiv.innerHTML = `<div>+</div><span>Add shortcut</span>`;
