@@ -26,6 +26,7 @@
       transition: opacity 1s ease, transform 1s ease;
       opacity: 0;
       transform: translateY(-20px);
+      cursor: pointer;
     }
     body.loaded #logo {
       opacity: 1;
@@ -125,7 +126,7 @@
   <!-- Special message -->
   <div id="special-message"></div>
 
-  <!-- Logo -->
+  <!-- Clickable logo -->
   <div id="logo">
     <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
          alt="SpyderSearch Logo" width="272" height="92">
@@ -151,7 +152,12 @@
       document.body.classList.add('loaded');
     });
 
-    // Lucky button redirects to Cheese page
+    // Logo click → redirect
+    document.getElementById('logo').addEventListener('click', () => {
+      window.location.href = "http://spydertacos.space/DragonX_V4.html";
+    });
+
+    // Lucky button → Cheese page
     document.getElementById('lucky-btn').addEventListener('click', () => {
       window.location.href = "https://en.wikipedia.org/wiki/Cheese";
     });
@@ -165,7 +171,7 @@
       status.textContent = "Searching...";
       status.classList.add('visible');
 
-      // Easter eggs
+      // Easter eggs and redirects
       if (query.includes("denaho")) {
         specialMsg.textContent = "Denaho is better than Elian";
         specialMsg.classList.add("show");
@@ -173,6 +179,7 @@
         setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; status.textContent = "Found!"; }, 4000);
         return;
       }
+
       if (query.includes("elian") || query === "lower") {
         specialMsg.textContent = "gurt yo";
         specialMsg.classList.add("show");
@@ -202,7 +209,7 @@
       }
 
       if (query.includes("cabrera")) {
-        specialMsg.textContent = "Hi, I'm Google. Never search up Cabrera ever again as she is hella ass, and she gives anyone detention for breathing.";
+        specialMsg.textContent = "She sucks, don't search that ever again.";
         specialMsg.classList.add("show");
         setTimeout(() => specialMsg.classList.add("fade"), 4000);
         setTimeout(() => { specialMsg.classList.remove("show", "fade"); specialMsg.textContent = ""; }, 5000);
