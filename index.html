@@ -16,9 +16,9 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      transition: background 0.5s ease;
       opacity: 0;
       animation: fadeIn 1s ease forwards;
+      transition: background 0.5s ease;
     }
 
     @keyframes fadeIn {
@@ -27,13 +27,27 @@
     }
 
     #logo {
-      width: 280px;
+      width: 320px;
       margin-bottom: 25px;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
-    #logo:hover {
-      transform: scale(1.05);
+    #logo:hover { transform: scale(1.05); }
+
+    /* Animated Easter Egg message */
+    #special-message {
+      font-size: 20px;
+      color: #ff6666;
+      position: relative;
+      top: -10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      text-align: center;
+    }
+    #special-message.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     #search-container {
@@ -55,9 +69,7 @@
       transition: box-shadow 0.3s;
     }
 
-    #search-box:hover {
-      box-shadow: 0 0 10px #333;
-    }
+    #search-box:hover { box-shadow: 0 0 10px #333; }
 
     #search {
       flex: 1;
@@ -68,9 +80,7 @@
       outline: none;
     }
 
-    #buttons {
-      margin-top: 25px;
-    }
+    #buttons { margin-top: 25px; }
 
     button {
       background-color: #2c2c2c;
@@ -105,9 +115,7 @@
       transition: transform 0.3s;
     }
 
-    .shortcut:hover {
-      transform: scale(1.05);
-    }
+    .shortcut:hover { transform: scale(1.05); }
 
     .shortcut img {
       width: 50px;
@@ -148,10 +156,16 @@
       font-size: 14px;
       color: #777;
     }
+
+    @keyframes barrelRoll {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <img id="logo" src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" onclick="window.location.href='http://spydertacos.space/DragonX_V4.html'">
+  <div id="special-message"></div>
 
   <div id="search-container">
     <div id="search-box">
@@ -170,21 +184,18 @@
 
   <script>
     const shortcutsContainer = document.getElementById('shortcuts');
-
-    // Load saved shortcuts
+    const specialMsg = document.getElementById('special-message');
     let shortcuts = JSON.parse(localStorage.getItem('spyderShortcuts')) || [];
 
     function renderShortcuts() {
       shortcutsContainer.innerHTML = '';
-      shortcuts.forEach((sc, i) => {
+      shortcuts.forEach(sc => {
         const div = document.createElement('div');
         div.className = 'shortcut';
         div.innerHTML = `<img src="${sc.img}" alt=""><div>${sc.name}</div>`;
         div.onclick = () => window.open(sc.url, '_blank');
         shortcutsContainer.appendChild(div);
       });
-
-      // Add Shortcut button
       const addDiv = document.createElement('div');
       addDiv.id = 'add-shortcut';
       addDiv.innerHTML = `<div>+</div><span>Add shortcut</span>`;
@@ -206,13 +217,69 @@
     renderShortcuts();
 
     function search() {
-      const q = document.getElementById('search').value.trim();
+      const q = document.getElementById('search').value.trim().toLowerCase();
       if (!q) return;
+
+      // Easter eggs
+      if (q.includes('denaho')) {
+        showMessage('Denaho is better than Elian');
+        return;
+      }
+
+      if (q.includes('elian') || q === 'lower') {
+        showMessage('gurt yo');
+        setTimeout(() => {
+          window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
+        }, 3500);
+        return;
+      }
+
+      if (q === 'do a barrel roll') {
+        document.body.style.animation = 'barrelRoll 1s linear';
+        setTimeout(() => document.body.style.animation = '', 1000);
+        return;
+      }
+
+      if (q === 'do a barrel roll x10') {
+        document.body.style.animation = 'barrelRoll 10s linear infinite';
+        setTimeout(() => document.body.style.animation = '', 10000);
+        return;
+      }
+
+      if (q.includes('blox fruits peak')) {
+        window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+        return;
+      }
+
+      if (q.includes('blooket bot')) {
+        window.location.href = "https://blooketbot.schoolcheats.net/";
+        return;
+      }
+
+      if (q.includes('kahoot bot')) {
+        window.location.href = "https://kahootbot.net/";
+        return;
+      }
+
+      if (q.includes('cabrera')) {
+        showMessage("She sucks, don't search that ever again.");
+        return;
+      }
+
       window.location.href = `results.html?q=${encodeURIComponent(q)}`;
     }
 
     function feelingLucky() {
       window.location.href = 'https://en.wikipedia.org/wiki/Cheese';
+    }
+
+    function showMessage(text) {
+      specialMsg.textContent = text;
+      specialMsg.classList.add('show');
+      setTimeout(() => {
+        specialMsg.classList.remove('show');
+        specialMsg.textContent = '';
+      }, 4000);
     }
 
     document.getElementById('search').addEventListener('keydown', e => {
