@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>COUNTDOWN TO INDIAN SPYDER</title>
+  <style>
+    :root{
+      --bg-1:#0f2027; --bg-2:#203a43; --card:#0b1220; --accent:#ff6b6b; --muted:#9aa0a6; --glass: rgba(255,255,255,0.04);
+      --maxw:900px;
+      font-family: Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+    }
+    html,body{height:100%;margin:0;padding:0;}
+    body{
+      display:flex;align-items:center;justify-content:center;overflow:hidden;
+      background:linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:var(--muted);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      animation:bgwave 8s ease-in-out infinite alternate;
+      background-size:400% 400%;
+    }
+    @keyframes bgwave {
+      0% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
+    }
+    .wrap{width:calc(100% - 40px);max-width:var(--maxw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(8px);border:1px solid rgba(255,255,255,0.04);
+      display:grid;grid-template-columns:1fr;gap:18px;align-items:center;
+    }
+    h1{margin:0;font-size:24px;color:#fff;text-align:center;letter-spacing:1px}
+    .timer{display:flex;gap:14px;justify-content:center;align-items:center;padding:26px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);animation:wave 2s ease-in-out infinite alternate;}
+    .segment{display:flex;flex-direction:column;align-items:center;min-width:80px}
+    .digits{display:flex;gap:8px}
+    .digit{min-width:48px;padding:12px 10px;border-radius:8px;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));text-align:center;font-weight:700;font-size:26px;color:#fff;box-shadow: inset 0 -6px 14px rgba(0,0,0,0.35);animation:rainbow 5s linear infinite;}
+    .label{margin-top:8px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .digit.tick{animation:pop 360ms cubic-bezier(.2,.9,.2,1), rainbow 5s linear infinite;}
+    @keyframes pop{0%{transform:translateY(-6px) scale(1.02);opacity:0.65}50%{transform:translateY(2px) scale(1.04);opacity:1}100%{transform:translateY(0) scale(1)}}
+    @keyframes wave{0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
+    @keyframes rainbow{
+      0%{color:#ff0000;}
+      16%{color:#ff7f00;}
+      33%{color:#ffff00;}
+      50%{color:#00ff00;}
+      66%{color:#0000ff;}
+      83%{color:#4b0082;}
+      100%{color:#8f00ff;}
+    }
+    .glow{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;filter:blur(46px);opacity:0.14;background:radial-gradient(circle at 30% 30%, rgba(255,107,107,0.6), transparent 20%), radial-gradient(circle at 70% 70%, rgba(60,160,255,0.6), transparent 18%);pointer-events:none}
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="indian.mp3" autoplay loop></audio>
+  <div class="glow"></div>
+  <div class="wrap">
+    <h1>COUNTDOWN TO INDIAN SPYDER</h1>
+    <section class="timer">
+      <div class="segment">
+        <div class="digits"><div class="digit" id="days">0</div></div>
+        <div class="label">Days</div>
+      </div>
+      <div class="segment">
+        <div class="digits"><div class="digit" id="hours">00</div></div>
+        <div class="label">Hours</div>
+      </div>
+      <div class="segment">
+        <div class="digits"><div class="digit" id="minutes">00</div></div>
+        <div class="label">Minutes</div>
+      </div>
+      <div class="segment">
+        <div class="digits"><div class="digit" id="seconds">00</div></div>
+        <div class="label">Seconds</div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minsEl = document.getElementById('minutes');
+    const secsEl = document.getElementById('seconds');
+
+    const targetMs = 1760000000000; // Set your epoch time in milliseconds here
+
+    function formatNumber(n, pad=2){return String(n).padStart(pad,'0');}
+
+    function tick(){
+      const now = Date.now();
+      let diff = Math.max(0, targetMs - now);
+      const sec = Math.floor(diff/1000) % 60;
+      const min = Math.floor(diff/60000) % 60;
+      const hr = Math.floor(diff/3600000) % 24;
+      const days = Math.floor(diff/86400000);
+
+      updateIfChanged(daysEl, days);
+      updateIfChanged(hoursEl, formatNumber(hr));
+      updateIfChanged(minsEl, formatNumber(min));
+      updateIfChanged(secsEl, formatNumber(sec));
+
+      requestAnimationFrame(tick);
+    }
+
+    function updateIfChanged(el, val){
+      if(el.textContent !== String(val)){
+        el.textContent = val;
+        el.classList.remove('tick');
+        void el.offsetWidth;
+        el.classList.add('tick');
+        setTimeout(()=>el.classList.remove('tick'),400);
+      }
+    }
+
+    requestAnimationFrame(tick);
+
+    // Try to autoplay the music (user gesture required in most browsers)
+    const audio = document.getElementById('bgm');
+    document.body.addEventListener('click', () => {
+      audio.play().catch(()=>{});
+    }, { once:true });
+  </script>
+</body>
+</html>
