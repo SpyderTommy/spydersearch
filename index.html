@@ -22,8 +22,23 @@
   body.loaded{opacity:1;}
 
   /* Logo */
-  #logo { margin-top:120px; transition:transform .35s ease, opacity 1s; cursor:pointer; }
-  #logo img{ width:360px; max-width:86vw; display:block; margin:0 auto; }
+  #logo {
+    margin-top:120px;
+    transition:transform .35s ease, opacity 1s;
+    cursor:pointer;
+  }
+  #logo img {
+    width:360px;
+    max-width:86vw;
+    display:block;
+    margin:0 auto;
+    transition: transform .35s ease, filter .35s ease, box-shadow .5s cubic-bezier(.25,.8,.25,1);
+  }
+  #logo:hover img {
+    transform: translateY(-8px);
+    filter: brightness(1.15);
+    box-shadow: 0 0 24px rgba(138,180,248,0.3);
+  }
 
   /* Search */
   #searchbox { margin-top:26px; }
@@ -62,7 +77,6 @@
   .icon img{ width:40px; height:40px; object-fit:cover; border-radius:50%; display:block; }
   .label{ font-size:13px; color:var(--text); opacity:.95; max-width:86px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  /* tiny action buttons that appear when hovering */
   .tile .action {
     display:none;
     position:absolute; top:6px; width:28px; height:28px; border-radius:6px; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.04);
@@ -71,21 +85,18 @@
   .tile:hover .action { display:flex; }
   .action.edit{ left:6px; } .action.remove{ right:6px; }
 
-  /* Add tile */
   .add-tile{
     width:92px; height:92px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center;
     border:1px dashed rgba(255,255,255,0.06); color:var(--muted); cursor:pointer; transition: background .12s;
   }
   .add-tile:hover{ background: rgba(255,255,255,0.02); color:var(--text); }
 
-  /* playful drag visual */
   .dragging{
     transform: scale(1.12) rotate(3deg); filter:brightness(1.2); box-shadow:0 18px 60px rgba(0,0,0,0.7);
   }
   .drag-target{ animation: glowPulse .6s ease infinite alternate; }
   @keyframes glowPulse{ from{ box-shadow:0 0 0 rgba(138,180,248,0.08);} to{ box-shadow:0 0 12px rgba(138,180,248,0.18); } }
 
-  /* modal - frosted glass */
   .modal-backdrop{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); backdrop-filter: blur(10px); z-index:2000; align-items:center; justify-content:center; }
   .modal-backdrop.show{ display:flex; }
   .modal {
@@ -103,7 +114,6 @@
   .btn-save{ background:var(--accent); border:none; color:#000; padding:8px 12px; border-radius:8px; cursor:pointer; transition: box-shadow .12s; }
   .btn-save:hover{ box-shadow:0 8px 24px rgba(138,180,248,0.12); }
 
-  /* centered context menu (frosted) */
   #context-centered { display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2100; width:240px; }
   #context-centered .card{ padding:10px; border-radius:10px; background:rgba(26,27,28,0.86); backdrop-filter: blur(8px); box-shadow:0 12px 40px rgba(0,0,0,0.6); }
   #context-centered button{ width:100%; text-align:left; padding:10px; border:none; background:transparent; color:var(--text); font-size:14px; cursor:pointer; border-radius:6px; }
@@ -134,7 +144,6 @@
 
   <footer>© SpyderGurt 2025</footer>
 
-  <!-- Add/Edit modal (frosted) -->
   <div id="modal-backdrop" class="modal-backdrop" aria-hidden="true">
     <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <h3 id="modal-title">Add shortcut</h3>
@@ -151,7 +160,6 @@
     </div>
   </div>
 
-  <!-- Centered context menu (frosted) -->
   <div id="context-centered" role="menu" aria-hidden="true">
     <div class="card">
       <button id="context-edit">Edit</button>
@@ -202,13 +210,14 @@ luckyBtn.addEventListener('click', ()=> window.location.href = "https://en.wikip
 
 /* ---------- App state ---------- */
 let shortcuts = loadShortcuts();
-// ensure defaults if empty
 if(shortcuts.length === 0){
   shortcuts = [
     { name:"Google", url:"https://www.google.com", img:"https://www.google.com/s2/favicons?sz=64&domain_url=https://www.google.com" },
     { name:"YouTube", url:"https://www.youtube.com", img:"https://www.google.com/s2/favicons?sz=64&domain_url=https://www.youtube.com" },
     { name:"Blooket", url:"https://blooket.com", img:"https://www.google.com/s2/favicons?sz=64&domain_url=https://blooket.com" },
     { name:"Kahoot", url:"https://kahoot.it", img:"https://www.google.com/s2/favicons?sz=64&domain_url=https://kahoot.it" },
+    { name:"a very secret page that no one should get in", url:"newheightsacademy.org", img:"https://www.google.com/s2/favicons?sz=64&domain_url=https://newheightsacademy.org" },
+
   ];
   saveShortcuts(shortcuts);
 }
@@ -225,7 +234,6 @@ function renderShortcuts(){
     tile.draggable = true;
     tile.dataset.index = i;
 
-    // build DOM
     const actionEdit = document.createElement('button');
     actionEdit.className = 'action edit';
     actionEdit.title = 'Edit';
@@ -248,7 +256,6 @@ function renderShortcuts(){
     iconWrap.className = 'icon';
     const img = document.createElement('img');
     img.alt = s.name || "shortcut";
-    // prefer provided image; fallback to site's favicon via google s2 domain service
     img.src = s.img && s.img.trim() ? s.img : ('https://www.google.com/s2/favicons?sz=64&domain_url=' + encodeURIComponent(s.url));
     img.onerror = () => { img.src = 'https://www.google.com/s2/favicons?sz=64&domain_url=' + encodeURIComponent(s.url); };
     iconWrap.appendChild(img);
@@ -262,7 +269,6 @@ function renderShortcuts(){
     tile.appendChild(iconWrap);
     tile.appendChild(label);
 
-    // click opens in new tab
     iconWrap.addEventListener('click', (ev)=> {
       ev.stopPropagation();
       window.open(s.url, '_blank', 'noopener');
@@ -272,7 +278,6 @@ function renderShortcuts(){
       window.open(s.url, '_blank', 'noopener');
     });
 
-    // drag handlers
     tile.addEventListener('dragstart', (ev)=>{
       dragIndex = Number(tile.dataset.index);
       tile.classList.add('dragging');
@@ -303,7 +308,6 @@ function renderShortcuts(){
       renderShortcuts();
     });
 
-    // right-click opens centered context menu (not native menu)
     tile.addEventListener('contextmenu', (ev)=>{
       ev.preventDefault();
       contextIndex = i;
@@ -313,7 +317,6 @@ function renderShortcuts(){
     shortcutsEl.appendChild(tile);
   });
 
-  // add tile
   const add = document.createElement('div');
   add.className = 'add-tile';
   add.innerHTML = `<div style="font-size:28px;line-height:1">+</div><div style="font-size:12px;margin-top:6px;color:var(--muted)">Add</div>`;
@@ -321,12 +324,10 @@ function renderShortcuts(){
   shortcutsEl.appendChild(add);
 }
 
-/* ---------- Drag helpers ---------- */
 function removeDragTargets(){
   document.querySelectorAll('.drag-target').forEach(n => n.classList.remove('drag-target'));
 }
 
-/* ---------- Shortcuts CRUD ---------- */
 function openAdd(){
   editingIndex = null;
   modalTitle.innerText = "Add shortcut";
@@ -351,123 +352,64 @@ function removeShortcut(i){
 function saveShortcutFromModal(){
   const name = scName.value.trim();
   const url = scUrl.value.trim();
+  if(!name || !url){ alert("Please enter name and URL."); return; }
   const img = scImg.value.trim();
-  if(!name || !url){ alert("Please provide a name and URL."); return; }
-  // normalize url (add https if missing)
-  let normalized = url;
-  if(!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(normalized)) normalized = "https://" + normalized;
-  const obj = { name, url: normalized, img };
-  if(editingIndex !== null && typeof editingIndex === 'number'){
+  const obj = { name, url, img };
+  if(editingIndex !== null){
     shortcuts[editingIndex] = obj;
   } else {
     shortcuts.push(obj);
   }
   saveShortcuts(shortcuts);
-  hideModal();
   renderShortcuts();
+  hideModal();
 }
-function saveShortcuts(arr){ saveShortcutsToStorage(arr || shortcuts); }
-function saveShortcutsToStorage(arr){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  shortcuts = arr;
-}
-
-/* ---------- Modal controls ---------- */
 function showModal(){
   modalBackdrop.classList.add('show');
   modal.classList.add('show');
-  modalBackdrop.setAttribute('aria-hidden','false');
-  setTimeout(()=> scName.focus(), 160);
+  modalBackdrop.style.display = 'flex';
 }
 function hideModal(){
   modalBackdrop.classList.remove('show');
   modal.classList.remove('show');
-  modalBackdrop.setAttribute('aria-hidden','true');
-  editingIndex = null;
+  setTimeout(()=>{ modalBackdrop.style.display = 'none'; }, 180);
 }
+btnSave.addEventListener('click', saveShortcutFromModal);
+btnCancel.addEventListener('click', hideModal);
+modalBackdrop.addEventListener('click', (ev)=>{
+  if(ev.target === modalBackdrop) hideModal();
+});
 
-/* ---------- Centered context menu (frosted) ---------- */
+/* ---------- Context menu ---------- */
 function openContextCentered(){
   contextCentered.style.display = 'block';
-  contextCentered.setAttribute('aria-hidden','false');
+  contextCentered.querySelector('.card').focus?.();
 }
 function closeContextCentered(){
   contextCentered.style.display = 'none';
-  contextCentered.setAttribute('aria-hidden','true');
 }
-
-/* ---------- Events ---------- */
-btnSave.addEventListener('click', saveShortcutFromModal);
-btnCancel.addEventListener('click', hideModal);
-modalBackdrop.addEventListener('click', (ev)=>{ if(ev.target === modalBackdrop) hideModal(); });
-
 ctxEdit.addEventListener('click', ()=>{
   closeContextCentered();
-  if(contextIndex != null) openEdit(contextIndex);
+  if(contextIndex !== null) openEdit(contextIndex);
 });
 ctxRemove.addEventListener('click', ()=>{
   closeContextCentered();
-  if(contextIndex != null) removeShortcut(contextIndex);
+  if(contextIndex !== null) removeShortcut(contextIndex);
+});
+document.addEventListener('click', (ev)=>{
+  if(!contextCentered.contains(ev.target)) closeContextCentered();
 });
 
-// keyboard: esc to close modals
-document.addEventListener('keydown', (ev)=>{
-  if(ev.key === 'Escape'){ hideModal(); closeContextCentered(); }
-});
-
-/* ---------- Search & Easter eggs ---------- */
+/* ---------- Search ---------- */
 function handleSearch(e){
   e.preventDefault();
-  const q = (queryEl.value || "").trim().toLowerCase();
-  statusEl.textContent = "Searching...";
-  statusEl.classList.add('visible');
-
-  if(q.includes("denaho")){
-    showTemporary("Denaho is better than Elian");
-    return;
-  }
-  if(q.includes("elian") || q === "lower"){
-    showTemporary("gurt yo");
-    setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3500);
-    return;
-  }
-  if(q === "do a barrel roll"){
-    document.body.style.animation = "barrelRoll 1s linear";
-    setTimeout(()=> document.body.style.animation = "", 1000);
-    return;
-  }
-  if(q === "do a barrel roll x10" || q === "do a barrel roll 10"){
-    let spins=0;
-    document.body.style.animation = "barrelRoll .6s linear infinite";
-    const iv = setInterval(()=>{ spins++; if(spins>=10){ clearInterval(iv); document.body.style.animation = ""; } }, 600);
-    return;
-  }
-  if(q.includes("blooket bot")) { window.location.href = "https://blooketbot.schoolcheats.net/"; return; }
-  if(q.includes("kahoot bot")) { window.location.href = "https://kahootbot.net"; return; }
-  if(q.includes("blox fruits peak")) { window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE"; return; }
-  if(q.includes("the weeknd peak")) { window.location.href = "https://youtu.be/4NRXx6U8ABQ?si=0NekiZ0x0ffKA4b0"; return; }
-  if(q.includes("cabrera")){ showTemporary("She sucks, don't search that ever again."); return; }
-
-  // default: go to results page (local results.html expected)
-  window.location.href = `results.html?q=${encodeURIComponent(q)}`;
-}
-document.getElementById('searchbox').addEventListener('submit', handleSearch);
-
-function showTemporary(txt, ms=3800){
-  statusEl.textContent = txt;
-  setTimeout(()=> { statusEl.textContent = ""; statusEl.classList.remove('visible'); }, ms);
+  const q = queryEl.value.trim();
+  if(!q) return;
+  window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
 }
 
 /* ---------- Init ---------- */
 renderShortcuts();
-
-/* ensure clicks outside context menu close it */
-document.addEventListener('click', (ev)=>{
-  if(contextCentered.style.display === 'block'){
-    // if click inside context-centered card ignore, else close
-    if(!contextCentered.contains(ev.target)) closeContextCentered();
-  }
-});
 </script>
 </body>
 </html>
