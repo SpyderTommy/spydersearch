@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SpyderSearch — Results</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+  :root{
+    --bg:#121212; --card:#202124; --muted:#9aa0a6; --text:#e8eaed; --accent:#1a73e8;
+  }
+  html,body{height:100%; margin:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: "Google Sans", Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-bottom:80px;
+  }
+  .topbar{
+    display:flex; align-items:center; gap:18px;
+    padding:18px 28px; border-bottom:1px solid rgba(255,255,255,0.03);
+    position:sticky; top:0; background:linear-gradient(180deg, rgba(18,18,18,0.95), rgba(18,18,18,0.9));
+    backdrop-filter: blur(6px); z-index:100;
+  }
+  #logo{cursor:pointer;}
+  #logo img{width:200px; max-width:45vw;}
+  .search-inline{flex:1; display:flex; align-items:center; gap:10px;}
+  .search-inline input[type="text"]{
+    width:100%; max-width:900px; height:40px; border-radius:20px; padding:0 14px; font-size:15px;
+    background:var(--card); border:1px solid #333; color:var(--text); outline:none;
+  }
+  .search-inline button{padding:8px 14px; border-radius:8px; border:none; background:var(--accent); color:white; cursor:pointer;}
+  .container{max-width:980px; margin:18px auto 120px; padding:0 18px;}
+  .meta{ color:var(--muted); font-size:14px; margin-bottom:12px;}
+  .results{ display:flex; flex-direction:column; gap:18px; }
+  .result{
+    text-align:left;
+    padding:14px 12px; border-radius:8px;
+    transition:background .12s ease;
+  }
+  .result:hover{ background: rgba(255,255,255,0.02); }
+  .result .r-url{ color: #8ab4f8; font-size:13px; margin-bottom:6px; display:block; word-break:break-all;}
+  .result .r-title{ color: #8ab4f8; font-size:18px; font-weight:500; margin-bottom:6px; text-decoration:none; display:block;}
+  .result .r-snippet{ color:var(--muted); font-size:14px; line-height:1.4; }
+  .r-domain{ color:var(--muted); font-size:13px; margin-right:8px; }
+  .paa{ margin:12px 0; background:var(--card); padding:12px; border-radius:10px; }
+  .pagination{ margin-top:22px; display:flex; gap:8px; align-items:center; }
+  .page-btn{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text); padding:8px 12px; border-radius:6px; cursor:pointer;}
+  footer{ position:fixed; bottom:16px; width:100%; text-align:center; color:var(--muted); font-size:13px;}
+  @media (max-width:640px){ .topbar{ padding:12px; } .container{ padding:0 12px; } .result .r-title{ font-size:16px; } }
+  mark{ background: rgba(255,213,79,0.12); color:inherit; padding:0 2px; border-radius:2px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div id="logo" title="Home (SpyderSearch)">
+      <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo">
+    </div>
+    <form id="topSearch" class="search-inline" onsubmit="doSearchFromBar(event)">
+      <input id="topQuery" type="text" placeholder="Search SpyderSearch..." />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <main class="container" id="main">
+    <div id="meta" class="meta"></div>
+    <div id="paa" class="paa" style="display:none;">
+      <strong>People also ask</strong>
+      <ul id="paaList" style="margin-top:8px; padding-left:18px; color:var(--muted)"></ul>
+    </div>
+    <div class="results" id="results"></div>
+
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <footer>© SpyderGurt 2025</footer>
+
+<script>
+/*
+  Simulated-but-realistic results renderer.
+  - Reads ?q= from URL
+  - Generates results by matching query tokens against a curated list of real domains
+  - Produces 10 results per page, supports pagination in-URL (?q=...&p=2)
+*/
+
+// curated domains and keywords mapping
+const SITE_DB = [
+  {domain:"google.com",                 name:"Google",         keywords:["search","maps","images","news","gmail","google"]},
+  {domain:"wikipedia.org",              name:"Wikipedia",      keywords:["wikipedia","wiki","article","encyclopedia"]},
+  {domain:"youtube.com",                name:"YouTube",        keywords:["video","youtube","music","playlist","channel"]},
+  {domain:"reddit.com",                 name:"Reddit",         keywords:["reddit","discussion","forum","subreddit"]},
+  {domain:"github.com",                 name:"GitHub",         keywords:["github","repo","code","open-source","project"]},
+  {domain:"stackoverflow.com",          name:"Stack Overflow", keywords:["stack overflow","stackoverflow","programming","question","answer"]},
+  {domain:"nytimes.com",                name:"NYTimes",        keywords:["news","article","nytimes","opinion","report"]},
+  {domain:"theguardian.com",            name:"The Guardian",   keywords:["news","article","guardian","report"]},
+  {domain:"blooket.com",                name:"Blooket",        keywords:["blooket","blooks","game","quiz"]},
+  {domain:"kahoot.it",                  name:"Kahoot",         keywords:["kahoot","quiz","game","kahoot"]},
+  {domain:"medium.com",                 name:"Medium",         keywords:["medium","blog","article","story"]},
+  {domain:"espn.com",                   name:"ESPN",           keywords:["sports","scores","espn","match"]},
+  {domain:"pitchfork.com",              name:"Pitchfork",      keywords:["music","review","album","pitchfork"]},
+  {domain:"x.com",                      name:"X (Twitter)",    keywords:["twitter","x","social","tweet"]},
+  {domain:"snapchat.com",               name:"Snapchat",       keywords:["snapchat","stories","snap"]},
+  {domain:"imdb.com",                   name:"IMDb",           keywords:["movie","imdb","cast","rating"]},
+  {domain:"cnn.com",                    name:"CNN",            keywords:["news","cnn","breaking","report"]},
+  {domain:"bbc.com",                    name:"BBC",            keywords:["news","bbc","report"]},
+  {domain:"spotify.com",                name:"Spotify",        keywords:["music","spotify","song","album"]},
+  {domain:"amazon.com",                 name:"Amazon",         keywords:["amazon","buy","product","reviews"]}
+];
+
+// small helper: read query param
+function param(name){
+  const u = new URL(location.href);
+  return u.searchParams.get(name);
+}
+function setParam(name, value){
+  const u = new URL(location.href);
+  u.searchParams.set(name, value);
+  history.replaceState(null,'',u.toString());
+}
+
+// highlight occurrences of query words
+function highlight(text, tokens){
+  if(!tokens || tokens.length===0) return escapeHtml(text);
+  // basic safe replacement (case-insensitive)
+  let out = escapeHtml(text);
+  tokens.forEach(t=>{
+    if(!t) return;
+    const regex = new RegExp('('+escapeRegExp(t)+')','ig');
+    out = out.replace(regex, '<mark>$1</mark>');
+  });
+  return out;
+}
+function escapeHtml(str){ return str.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+// create plausible title/snippet templates
+const TITLE_TEMPLATES = [
+  "{query} — Official Site",
+  "{query} | {siteName}",
+  "How to {query} (2025 Guide) — {siteName}",
+  "{query}: Tips, News & Resources — {siteName}",
+  "{siteName}: {query} explained",
+  "{query} — Latest Articles & Guides"
+];
+const SNIPPET_TEMPLATES = [
+  "Find out everything about {query} including tips, tutorials, and official resources. Updated in 2025.",
+  "Read a comprehensive guide to {query} with examples, diagrams and community comments.",
+  "Learn how to {query} quickly. Step-by-step instructions and best practices from {siteName}.",
+  "Discover news and updates about {query}. Opinions, reviews, and in-depth coverage.",
+  "A community-curated collection of resources for {query}. Insights, tips, and frequently asked questions."
+];
+
+// ranking: for each site, count keyword matches against query tokens
+function rankSites(tokens){
+  const scores = SITE_DB.map(s=>{
+    let score = 0;
+    const joined = (s.keywords||[]).join(' ').toLowerCase();
+    tokens.forEach(t => { if(joined.includes(t)) score += 2; if(s.domain.includes(t)) score += 1; });
+    return {site:s, score};
+  });
+  // add a small random factor for variety
+  return scores.sort((a,b)=> b.score - a.score || Math.random()-0.5).map(s=>s.site);
+}
+
+// build a list of results for given query
+function buildResults(query, page=1, perPage=10){
+  const rawTokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+  // select ordered sites by relevance
+  const ordered = rankSites(rawTokens);
+  // also include some probable domains (search engines, forums, etc.)
+  const results = [];
+  // ensure variety: mix top matches + general sites + specialized sites
+  const addFrom = (site, idx) => {
+    const titleTpl = TITLE_TEMPLATES[(idx + query.length) % TITLE_TEMPLATES.length];
+    const snippetTpl = SNIPPET_TEMPLATES[(idx + query.length*2) % SNIPPET_TEMPLATES.length];
+    const title = titleTpl.replace(/\{query\}/g, capitalize(query)).replace(/\{siteName\}/g, site.name);
+    const snippet = snippetTpl.replace(/\{query\}/g, query).replace(/\{siteName\}/g, site.name);
+    const url = makeURL(site.domain, query);
+    return { title, snippet, url, domain:site.domain, siteName:site.name };
+  };
+
+  // seed with ordered relevant sites first
+  for(let i=0;i<ordered.length && results.length < 30;i++){
+    results.push(addFrom(ordered[i], i));
+  }
+  // ensure some cross-section of social/dev/news results
+  const fallbackDomains = ["wikipedia.org","youtube.com","reddit.com","github.com","stackoverflow.com","nytimes.com","medium.com"];
+  fallbackDomains.forEach((d,i)=>{
+    if(results.length >= 30) return;
+    const site = SITE_DB.find(s=>s.domain===d) || {domain:d, name:d.split('.')[0]};
+    results.push(addFrom(site, i+40));
+  });
+
+  // now produce final page slice
+  const totalApprox =  (Math.floor(Math.random()*8)+1) * 100000; // e.g., 100k - 900k
+  const start = (page-1)*perPage;
+  const pageResults = results.slice(start, start+perPage);
+  return { results: pageResults, total: totalApprox };
+}
+
+// helper to build plausible URL for site + query
+function makeURL(domain, query){
+  // choose path style depending on domain
+  const qslug = encodeURIComponent(query.replace(/\s+/g,'-'));
+  if(domain.includes("wikipedia")) return `https://${domain}/wiki/${encodeURIComponent(query.replace(/\s+/g,'_'))}`;
+  if(domain.includes("youtube")) return `https://${domain}/results?search_query=${encodeURIComponent(query)}`;
+  if(domain.includes("github")) return `https://${domain}/search?q=${encodeURIComponent(query)}`;
+  if(domain.includes("stackoverflow")) return `https://${domain}/questions/tagged/${encodeURIComponent(query.split(' ')[0]||'')}`;
+  return `https://${domain}/search?q=${encodeURIComponent(query)}`;
+}
+
+// small util
+function capitalize(s){ return s.split(' ').map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(' '); }
+
+// People Also Ask generator (3 items)
+function generatePAA(query){
+  const tokens = query.split(/\s+/).filter(Boolean);
+  const base = tokens.slice(0,3).join(' ');
+  return [
+    `What is ${base}?`,
+    `How does ${tokens[0]||query} work?`,
+    `Is ${base} safe to use?`
+  ];
+}
+
+// render to DOM
+function renderPage(){
+  const q = param('q') || "";
+  const p = parseInt(param('p')||'1',10) || 1;
+  const resultsNode = document.getElementById('results');
+  const metaNode = document.getElementById('meta');
+  const paaNode = document.getElementById('paa');
+  const paaList = document.getElementById('paaList');
+
+  // populate top search input
+  document.getElementById('topQuery').value = q;
+
+  if(!q){
+    metaNode.textContent = "Type something to search SpyderSearch.";
+    resultsNode.innerHTML = "";
+    paaNode.style.display = 'none';
+    return;
+  }
+
+  // simulate fetch & timing
+  const start = performance.now();
+  const {results, total} = buildResults(q, p, 10);
+  const ms = (Math.random()*0.6 + 0.08).toFixed(2);
+
+  metaNode.innerHTML = `About ${numberWithCommas(total)} results (${ms} seconds)`;
+
+  // People also ask
+  const paaItems = generatePAA(q);
+  paaList.innerHTML = "";
+  paaItems.forEach(it=>{
+    const li = document.createElement('li');
+    li.textContent = it;
+    paaList.appendChild(li);
+  });
+  paaNode.style.display = 'block';
+
+  // results
+  resultsNode.innerHTML = "";
+  results.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'result';
+    div.innerHTML = `
+      <div class="r-url">${escapeHtml(r.url)}</div>
+      <a class="r-title" href="${r.url}" target="_blank" rel="noopener noreferrer">${highlightHtml(r.title, q)}</a>
+      <div class="r-snippet">${highlightHtml(r.snippet, q)}</div>
+    `;
+    resultsNode.appendChild(div);
+  });
+
+  // pagination
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = "";
+  const pages = 5;
+  for(let i=1;i<=pages;i++){
+    const btn = document.createElement('button');
+    btn.className = 'page-btn';
+    btn.textContent = i;
+    if(i === p) btn.style.boxShadow = 'inset 0 0 0 2px rgba(255,255,255,0.04)';
+    btn.addEventListener('click', ()=> {
+      const u = new URL(location.href);
+      u.searchParams.set('q', q);
+      u.searchParams.set('p', i);
+      location.href = u.toString();
+    });
+    pagination.appendChild(btn);
+  }
+
+  // scroll to top
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// small highlight util for displayed HTML
+function highlightHtml(text, query){
+  const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return highlight(text, tokens);
+}
+
+// smaller helpers
+function numberWithCommas(x){ return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+
+// read params then render
+function param(name){
+  const u = new URL(location.href);
+  return u.searchParams.get(name);
+}
+
+function doSearchFromBar(ev){
+  ev.preventDefault();
+  const q = document.getElementById('topQuery').value.trim();
+  if(!q) return;
+  const u = new URL(location.href);
+  u.searchParams.set('q', q);
+  u.searchParams.delete('p');
+  location.href = u.toString();
+}
+
+function escapeHtml(str){ return String(str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// render on load
+window.addEventListener('load', ()=> {
+  // logo click goes back home (index.html)
+  document.getElementById('logo').addEventListener('click', ()=> location.href = 'index.html');
+
+  // populate and render
+  renderPage();
+});
+</script>
+</body>
+</html>
