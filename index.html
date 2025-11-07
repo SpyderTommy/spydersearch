@@ -26,6 +26,7 @@
     margin-top:120px;
     transition:transform .35s ease, opacity 1s;
     cursor:pointer;
+    position:relative;
   }
   #logo img{
     width:360px;
@@ -36,6 +37,23 @@
   }
   #logo:hover img{
     transform: translateY(-8px); /* hover upward */
+  }
+
+  /* Easter egg text */
+  #easter-egg-text {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%) translateY(60px);
+    opacity:0;
+    color:var(--accent);
+    font-size:20px;
+    font-weight:600;
+    transition:all 1.2s ease;
+    pointer-events:none;
+  }
+  #easter-egg-text.show {
+    transform:translateX(-50%) translateY(-10px);
+    opacity:1;
   }
 
   /* Search */
@@ -75,7 +93,6 @@
   .icon img{ width:40px; height:40px; object-fit:cover; border-radius:50%; display:block; }
   .label{ font-size:13px; color:var(--text); opacity:.95; max-width:86px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  /* action buttons on hover */
   .tile .action {
     display:none;
     position:absolute; top:6px; width:28px; height:28px; border-radius:6px; background:rgba(0,0,0,0.45);
@@ -92,13 +109,19 @@
   .add-tile:hover{ background: rgba(255,255,255,0.02); color:var(--text); }
 
   footer{ position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px; }
-  @media(max-width:520px){ #query{ width:88vw; } .tile{ width:80px; height:80px;} .icon{width:48px;height:48px;} }
+
+  @media(max-width:520px){
+    #query{ width:88vw; }
+    .tile{ width:80px; height:80px;}
+    .icon{width:48px;height:48px;}
+  }
 </style>
 </head>
 <body>
   <div id="logo" title="Go to DragonX">
     <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" />
   </div>
+  <div id="easter-egg-text">🐞 Easter Egg Found!</div>
 
   <form id="searchbox" onsubmit="handleSearch(event)">
     <input id="query" type="text" placeholder="Search SpyderSearch..." autocomplete="off" />
@@ -111,38 +134,47 @@
   <div id="status" aria-live="polite"></div>
 
   <footer>© SpyderGurt 2025</footer>
+  
+  <script>
+  const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
 
-<script>
-const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
+  window.addEventListener('load', ()=> document.body.classList.add('loaded'));
+  document.querySelector('#logo img').addEventListener('click', ()=> window.location.href = LOGO_URL);
 
-window.addEventListener('load', ()=> document.body.classList.add('loaded'));
-document.querySelector('#logo img').addEventListener('click', ()=> window.location.href = LOGO_URL);
+  document.getElementById('lucky').addEventListener('click', ()=>{
+    window.location.href = "https://en.wikipedia.org/wiki/Cheese";
+  });
 
-document.getElementById('lucky').addEventListener('click', ()=>{
-  window.location.href = "https://en.wikipedia.org/wiki/Cheese";
-});
+  function handleSearch(e){
+    e.preventDefault();
+    const q = document.getElementById('query').value.trim().toLowerCase();
+    const eggText = document.getElementById('easter-egg-text');
+    if(!q) return;
 
-function handleSearch(e){
-  e.preventDefault();
-  const q = document.getElementById('query').value.trim().toLowerCase();
-  if(!q) return;
+    // Easter eggs
+    if(q.includes("denaho")) return alert("Denaho is better than Elian");
 
-  // Easter eggs
-  if(q.includes("denaho")) return alert("Denaho is better than Elian");
-  if(q.includes("elian") || q === "lower"){
-    alert("gurt yo");
-    setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3500);
-    return;
+    if(q.includes("elian") || q === "lower"){
+      alert("gurt yo");
+      setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3500);
+      return;
+    }
+
+    if(q === "do a barrel roll"){
+      document.body.style.animation = "barrelRoll 1s linear";
+      setTimeout(()=> document.body.style.animation = "", 1000);
+      return;
+    }
+
+    if(q === "easter eggs" || q.includes("easter egg")){
+      eggText.classList.add('show');
+      setTimeout(()=> eggText.classList.remove('show'), 4000);
+      return;
+    }
+
+    // normal search → redirect to results page
+    window.location.href = `results.html?q=${encodeURIComponent(q)}`;
   }
-  if(q === "do a barrel roll"){
-    document.body.style.animation = "barrelRoll 1s linear";
-    setTimeout(()=> document.body.style.animation = "", 1000);
-    return;
-  }
-
-  // normal search → redirect to results page
-  window.location.href = `results.html?q=${encodeURIComponent(q)}`;
-}
-</script>
+  </script>
 </body>
 </html>
