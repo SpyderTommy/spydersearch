@@ -47,7 +47,8 @@
     .search-buttons {
       margin-top: 20px;
     }
-    .search-buttons input[type="submit"] {
+    .search-buttons input[type="submit"],
+    .search-buttons input[type="button"] {
       margin: 6px;
       padding: 8px 18px;
       border-radius: 4px;
@@ -58,7 +59,7 @@
       font-size: 14px;
       transition: background-color 0.2s ease;
     }
-    .search-buttons input[type="submit"]:hover {
+    .search-buttons input:hover {
       background-color: #3c4043;
     }
 
@@ -86,6 +87,7 @@
       width: 80px;
       cursor: grab;
       user-select: none;
+      position: relative;
     }
     .shortcut img {
       width: 60px;
@@ -107,6 +109,23 @@
       white-space: nowrap;
       width: 70px;
     }
+
+    .edit-btn, .delete-btn {
+      position: absolute;
+      top: 2px;
+      font-size: 12px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px 4px;
+      display: none;
+    }
+    .edit-btn { left: 2px; }
+    .delete-btn { right: 2px; }
+    .shortcut:hover .edit-btn, .shortcut:hover .delete-btn { display: block; }
+
     #add-shortcut {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -204,7 +223,7 @@
 
   <div id="modal">
     <div id="modal-content">
-      <h3>Add Shortcut</h3>
+      <h3 id="modal-title">Add Shortcut</h3>
       <input type="text" id="shortcut-name" placeholder="Name">
       <input type="text" id="shortcut-url" placeholder="https://example.com">
       <input type="text" id="shortcut-img" placeholder="Image URL (optional)">
@@ -214,15 +233,13 @@
 
   <script>
     window.addEventListener('load', () => document.body.classList.add('loaded'));
-
-    document.getElementById('logo-img').onclick = () => {
-      window.location.href = "http://spydertacos.space/DragonX_V4.html";
-    };
+    document.getElementById('logo-img').onclick = () => window.location.href = "http://spydertacos.space/DragonX_V4.html";
 
     const status = document.getElementById('status');
     const queryInput = document.getElementById('query');
     const shortcutsDiv = document.getElementById('shortcuts');
     const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
 
     // Easter Eggs
     function handleSearch(event) {
@@ -231,49 +248,28 @@
       status.textContent = "Searching...";
       status.classList.add('visible');
 
-      if (query.includes("denaho")) {
-        status.textContent = "Denaho is better than Elian";
-        return;
-      }
-      if (query.includes("elian") || query === "lower") {
-        window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
-        return;
-      }
+      if (query.includes("denaho")) return status.textContent = "Denaho is better than Elian";
+      if (query.includes("elian") || query === "lower") return window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ";
       if (query === "do a barrel roll") {
         document.body.style.animation = "barrelRoll 1s linear";
-        setTimeout(() => document.body.style.animation = "", 1000);
-        return;
+        setTimeout(() => document.body.style.animation = "", 1000); return;
       }
       if (query === "do a barrel roll x10") {
         document.body.style.animation = "barrelRoll 10s linear infinite";
-        setTimeout(() => document.body.style.animation = "", 10000);
-        return;
+        setTimeout(() => document.body.style.animation = "", 10000); return;
       }
-      if (query.includes("blooket bot")) {
-        window.location.href = "https://blooketbot.schoolcheats.net/";
-        return;
-      }
-      if (query.includes("blox fruits peak")) {
-        window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
-        return;
-      }
-      if (query.includes("cabrera")) {
-        status.textContent = "She sucks, don't search that ever again.";
-        return;
-      }
-      if (query.includes("kahoot bot")) {
-        window.location.href = "https://kahootbot.net";
-        return;
-      }
+      if (query.includes("blooket bot")) return window.location.href = "https://blooketbot.schoolcheats.net/";
+      if (query.includes("blox fruits peak")) return window.location.href = "https://www.youtube.com/watch?v=z-i1pAF6FjE";
+      if (query.includes("cabrera")) return status.textContent = "She sucks, don't search that ever again.";
+      if (query.includes("kahoot bot")) return window.location.href = "https://kahootbot.net";
       window.location.href = `results.html?q=${encodeURIComponent(query)}`;
     }
 
-    document.getElementById('lucky').onclick = () => {
-      window.location.href = "https://en.wikipedia.org/wiki/Cheese";
-    };
+    document.getElementById('lucky').onclick = () => window.location.href = "https://en.wikipedia.org/wiki/Cheese";
 
-    // --- Shortcuts ---
+    // Shortcuts
     let shortcuts = JSON.parse(localStorage.getItem('spyder-shortcuts') || '[]');
+    let editIndex = null;
 
     function renderShortcuts() {
       shortcutsDiv.innerHTML = '';
@@ -281,8 +277,23 @@
         const el = document.createElement('div');
         el.className = 'shortcut';
         el.draggable = true;
-        el.innerHTML = `<img src="${s.img || 'https://www.google.com/favicon.ico'}"><span>${s.name}</span>`;
-        el.onclick = () => window.open(s.url, '_blank');
+        el.innerHTML = `
+          <button class="edit-btn">✏️</button>
+          <button class="delete-btn">🗑️</button>
+          <img src="${s.img || 'https://www.google.com/favicon.ico'}">
+          <span>${s.name}</span>
+        `;
+        el.querySelector('img').onclick = () => window.open(s.url, '_blank');
+        el.querySelector('.delete-btn').onclick = e => { e.stopPropagation(); shortcuts.splice(i, 1); saveShortcuts(); };
+        el.querySelector('.edit-btn').onclick = e => {
+          e.stopPropagation();
+          editIndex = i;
+          modalTitle.textContent = "Edit Shortcut";
+          document.getElementById('shortcut-name').value = s.name;
+          document.getElementById('shortcut-url').value = s.url;
+          document.getElementById('shortcut-img').value = s.img || '';
+          modal.style.display = 'flex';
+        };
         el.ondragstart = e => e.dataTransfer.setData('index', i);
         el.ondragover = e => e.preventDefault();
         el.ondrop = e => {
@@ -295,7 +306,14 @@
       const addBtn = document.createElement('div');
       addBtn.id = 'add-shortcut';
       addBtn.textContent = '+';
-      addBtn.onclick = () => modal.style.display = 'flex';
+      addBtn.onclick = () => {
+        editIndex = null;
+        modalTitle.textContent = "Add Shortcut";
+        document.getElementById('shortcut-name').value = '';
+        document.getElementById('shortcut-url').value = '';
+        document.getElementById('shortcut-img').value = '';
+        modal.style.display = 'flex';
+      };
       shortcutsDiv.appendChild(addBtn);
     }
 
@@ -309,14 +327,15 @@
       const url = document.getElementById('shortcut-url').value.trim();
       const img = document.getElementById('shortcut-img').value.trim();
       if (name && url) {
-        shortcuts.push({ name, url, img });
+        const obj = { name, url, img };
+        if (editIndex !== null) shortcuts[editIndex] = obj;
+        else shortcuts.push(obj);
         saveShortcuts();
         modal.style.display = 'none';
       }
     };
 
     modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
-
     renderShortcuts();
   </script>
 </body>
