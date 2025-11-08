@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>become monke</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 2s ease-in-out;
+    }
+    #image {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <img id="image" src="image.jpg" alt="Background Image">
+  <audio id="music" src="monke.mp3" preload="auto"></audio>
+
+  <script>
+    const img = document.getElementById("image");
+    const music = document.getElementById("music");
+
+    setTimeout(() => {
+      img.style.opacity = "1";
+      document.body.style.background = "url('image.jpg') center/cover no-repeat";
+      music.volume = 1.0;
+      music.play().catch(() => {
+        console.warn("Autoplay blocked — user interaction may be required.");
+      });
+    }, 5000);
+  </script>
+</body>
+</html>
