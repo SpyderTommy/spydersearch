@@ -15,6 +15,7 @@
     color: white;
     font-family: "Comic Sans MS", sans-serif;
     flex-direction: column;
+    overflow: hidden;
   }
   #playButton {
     background: white;
@@ -34,28 +35,51 @@
     font-size: 1.8rem;
     margin-bottom: 20px;
     display: none;
+    text-align: center;
   }
   video {
     display: none;
     width: 100%;
     height: 100%;
     object-fit: contain;
+    background: black;
+  }
+  #finalImage {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 2s ease-in;
   }
 </style>
 </head>
 <body>
 
 <div id="text">papyrus: God damn it</div>
-<button id="playButton">sans</button>
+<button id="playButton">sans' funny hotdog adventure (active)</button>
 <video id="video" src="heykid.mp4"></video>
+<img id="finalImage" src="image.jpg" alt="final image">
 
 <script>
   const btn = document.getElementById("playButton");
   const text = document.getElementById("text");
   const video = document.getElementById("video");
+  const finalImage = document.getElementById("finalImage");
+
+  // Request fullscreen helper
+  function goFullscreen(elem) {
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+  }
 
   btn.addEventListener("click", () => {
     btn.style.display = "none";
+    text.textContent = "papyrus: God damn it";
     text.style.display = "block";
 
     // show Papyrus text for 2 seconds
@@ -63,6 +87,27 @@
       text.style.display = "none";
       video.style.display = "block";
       video.play();
+      goFullscreen(video);
+    }, 2000);
+  });
+
+  video.addEventListener("ended", () => {
+    video.style.display = "none";
+    text.style.display = "block";
+    text.textContent = "Papyrus: SANS SHUT THE FUCK UP, THEY'RE A KID";
+
+    // After 2 seconds, show Sans text
+    setTimeout(() => {
+      text.textContent = "Sans: what you mean?";
+
+      // After 2 seconds, fade in image
+      setTimeout(() => {
+        text.style.display = "none";
+        finalImage.style.display = "block";
+        requestAnimationFrame(() => {
+          finalImage.style.opacity = "1";
+        });
+      }, 2000);
     }, 2000);
   });
 </script>
