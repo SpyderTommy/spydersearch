@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>hey kid..</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#0f1724;
+      --muted:#9aa4b2;
+      --accent:#6ee7b7;
+      --accent-2:#60a5fa;
+      --glass: rgba(255,255,255,0.04);
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(96,165,250,0.06), transparent 10%),
+        radial-gradient(circle at 90% 90%, rgba(110,231,183,0.03), transparent 10%),
+        var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      box-sizing:border-box;
+    }
+
+    .player {
+      width:100%;
+      max-width:980px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:12px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+      backdrop-filter: blur(6px) saturate(120%);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .video-wrap{
+      position:relative;
+      border-radius:10px;
+      overflow:hidden;
+      background:var(--card);
+    }
+
+    video{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:72vh;
+      background: black;
+    }
+
+    /* big centered play overlay (hidden when controls used) */
+    .overlay-play{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+      transition:opacity .18s ease;
+    }
+    .overlay-play.hidden{opacity:0; visibility:hidden;}
+    .play-btn {
+      pointer-events:auto;
+      width:92px;
+      height:92px;
+      border-radius:50%;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transform:translateY(0);
+      transition:transform .12s ease, box-shadow .12s ease;
+      box-shadow: 0 6px 22px rgba(2,6,23,0.6);
+    }
+    .play-btn:active{ transform:translateY(1px) scale(.99); }
+    .play-icon{
+      width:0;
+      height:0;
+      border-left:20px solid white;
+      border-top:12px solid transparent;
+      border-bottom:12px solid transparent;
+      margin-left:6px;
+      opacity:.95;
+    }
+
+    /* Controls area */
+    .controls {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      margin-top:10px;
+    }
+
+    .btn {
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.03);
+      border-radius:8px;
+      padding:8px;
+      min-width:44px;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:active{ transform:translateY(1px); }
+    .btn svg{ width:20px; height:20px; display:block; }
+
+    .progress {
+      -webkit-appearance:none;
+      appearance:none;
+      height:8px;
+      width:100%;
+      background: rgba(255,255,255,0.06);
+      border-radius:99px;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .progress::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      width:14px;height:14px;border-radius:50%;
+      background:white;box-shadow:0 2px 6px rgba(0,0,0,0.4);
+      margin-top:-3px;
+    }
+
+    .time { font-size:13px; color:var(--muted); min-width:74px; text-align:center; }
+
+    .right-controls { display:flex; gap:8px; align-items:center; margin-left:auto; }
+
+    .volume {
+      width:110px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    @media (max-width:520px){
+      .controls{ gap:6px; padding:8px; }
+      .play-btn{ width:72px;height:72px }
+      .btn{ min-width:40px; min-height:40px; padding:6px; }
+      .time{ display:none; }
+      .volume{ display:none; }
+    }
+
+    .meta {
+      margin-top:12px;
+      font-size:13px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .title { font-weight:600; color:#eaf6ff; }
+    a.link { color:var(--accent-2); text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="player" role="region" aria-label="Video player">
+      <div class="video-wrap">
+        <!-- Video element: put heykid.mp4 in the same folder -->
+        <video id="video" preload="metadata" playsinline muted>
+          <source src="heykid.mp4" type="video/mp4">
+          <!-- If you have a poster image, add poster="poster.jpg" on the <video> tag -->
+          Your browser does not support HTML5 video. You can
+          <a href="heykid.mp4" download style="color:var(--accent);">download the file</a>.
+        </video>
+
+        <!-- Centered overlay play button (useful for autoplay-muted UX) -->
+        <div id="overlay" class="overlay-play">
+          <button id="bigPlay" class="play-btn" aria-label="Play" title="Play">
+            <span class="play-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls" aria-hidden="false">
+        <button id="playPause" class="btn" aria-label="Play/Pause" title="Play/Pause">
+          <!-- SVG play icon (will rotate to pause visually via JS) -->
+          <svg id="playIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 3v18l15-9L5 3z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+          <input id="progress" type="range" min="0" max="100" value="0" class="progress" aria-label="Seek">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="time" id="timeDisplay">0:00 / 0:00</div>
+            <div class="right-controls">
+              <div class="volume" title="Volume">
+                <button id="muteBtn" class="btn" aria-label="Mute/unmute">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+                  </svg>
+                </button>
+                <input id="volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume slider" style="width:70px;">
+              </div>
+
+              <button id="fsBtn" class="btn" aria-label="Toggle fullscreen" title="Fullscreen">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 14H5v5h5v-2H7v-3zM19 5h-5v2h3v3h2V5zM7 5v3H5V5h2zM14 19v-3h3v-2h2v5h-5z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="title">heykid.mp4</div>
+        <div style="flex:1"></div>
+        <div style="font-size:13px; color:var(--muted)">Local file — place in same folder as this page</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ELEMENTS
+    const video = document.getElementById('video');
+    const playPause = document.getElementById('playPause');
+    const playIcon = document.getElementById('playIcon');
+    const bigPlay = document.getElementById('bigPlay');
+    const overlay = document.getElementById('overlay');
+    const progress = document.getElementById('progress');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const volume = document.getElementById('volume');
+    const muteBtn = document.getElementById('muteBtn');
+    const fsBtn = document.getElementById('fsBtn');
+
+    // UTILS
+    function formatTime(sec){
+      if (!isFinite(sec)) return '0:00';
+      const s = Math.floor(sec % 60).toString().padStart(2,'0');
+      const m = Math.floor(sec / 60);
+      return `${m}:${s}`;
+    }
+
+    // INITIAL SETUP: try to load metadata to set duration
+    video.addEventListener('loadedmetadata', () => {
+      updateTime();
+    });
+
+    // Update time display + progress
+    function updateTime(){
+      const cur = video.currentTime;
+      const dur = video.duration || 0;
+      timeDisplay.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+      progress.value = dur ? (cur / dur) * 100 : 0;
+    }
+
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('progress', updateTime);
+
+    // Play/pause toggle
+    function togglePlay(){
+      if(video.paused || video.ended){
+        video.play().catch(()=> {
+          // autoplay might be blocked — unmute then play
+          video.muted = true;
+          video.play().catch(()=>{});
+        });
+      } else {
+        video.pause();
+      }
+    }
+
+    playPause.addEventListener('click', togglePlay);
+    bigPlay.addEventListener('click', togglePlay);
+
+    // Show/hide overlay depending on state
+    function refreshUI(){
+      if (video.paused){
+        overlay.classList.remove('hidden');
+        // set play icon
+        playIcon.innerHTML = '<path d="M5 3v18l15-9L5 3z" fill="currentColor"/>';
+        playPause.setAttribute('aria-pressed','false');
+      } else {
+        overlay.classList.add('hidden');
+        // show pause icon (two bars)
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zM14 5v14h4V5h-4z" fill="currentColor"/>';
+        playPause.setAttribute('aria-pressed','true');
+      }
+    }
+    video.addEventListener('play', refreshUI);
+    video.addEventListener('pause', refreshUI);
+    video.addEventListener('ended', () => {
+      refreshUI();
+      overlay.classList.remove('hidden');
+    });
+
+    // Seek through progress bar
+    let seeking = false;
+    progress.addEventListener('input', (e)=>{
+      const pct = parseFloat(e.target.value);
+      const dur = video.duration || 0;
+      const t = dur * (pct / 100);
+      video.currentTime = t;
+      updateTime();
+    });
+
+    // Volume and mute
+    volume.addEventListener('input', (e)=>{
+      video.volume = parseFloat(e.target.value);
+      video.muted = video.volume === 0;
+    });
+
+    muteBtn.addEventListener('click', ()=>{
+      video.muted = !video.muted;
+      // reflect volume slider if muted
+      if(video.muted) volume.value = 0; else if (video.volume === 0) volume.value = 1;
+    });
+
+    // fullscreen toggle
+    fsBtn.addEventListener('click', ()=>{
+      const el = video.closest('.player');
+      if (!document.fullscreenElement){
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      // space toggles play/pause (avoid when typing)
+      if (e.key === ' ' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+        e.preventDefault();
+        togglePlay();
+      }
+      if (e.key === 'ArrowRight') video.currentTime = Math.min(video.duration || 0, video.currentTime + 5);
+      if (e.key === 'ArrowLeft') video.currentTime = Math.max(0, video.currentTime - 5);
+      if (e.key.toLowerCase() === 'm') video.muted = !video.muted;
+      if (e.key === 'f') {
+        const el = video.closest('.player');
+        if (!document.fullscreenElement) el.requestFullscreen().catch(()=>{});
+        else document.exitFullscreen().catch(()=>{});
+      }
+    });
+
+    // Try to autoplay muted for a smoother UX on some browsers
+    (async function tryAutoplay(){
+      try {
+        // start muted to increase autoplay success
+        video.muted = true;
+        await video.play();
+        // if autoplay succeeded, hide overlay
+        overlay.classList.add('hidden');
+        // unmute? leave muted so user isn't surprised; they can unmute via controls
+      } catch(e){
+        // autoplay blocked — show overlay and let user press play
+        overlay.classList.remove('hidden');
+      } finally {
+        refreshUI();
+      }
+    })();
+
+    // Click on video toggles play/pause
+    video.addEventListener('click', togglePlay);
+
+    // Make the big overlay disappear on move after play
+    video.addEventListener('playing', ()=>{
+      setTimeout(()=> overlay.classList.add('hidden'), 80);
+    });
+
+    // Accessibility: announce duration when metadata loaded
+    video.addEventListener('loadedmetadata', ()=>{
+      video.setAttribute('aria-label', `Video — ${formatTime(video.duration)}`);
+      updateTime();
+    });
+  </script>
+</body>
+</html>
