@@ -22,36 +22,16 @@
   body.loaded {opacity:1;}
   body.fade-out {opacity:0;}
 
-  #logo {
-    margin-top:120px;
-    transition:transform .35s ease, opacity 1s;
-    cursor:pointer;
-    position:relative;
-  }
-  #logo img {
-    width:360px;
-    max-width:86vw;
-    display:block;
-    margin:0 auto;
-    transition: transform .35s ease;
-  }
+  #logo { margin-top:120px; transition:transform .35s ease, opacity 1s; cursor:pointer; position:relative; }
+  #logo img { width:360px; max-width:86vw; display:block; margin:0 auto; transition: transform .35s ease; }
   #logo:hover img { transform: translateY(-8px); }
 
   #easter-egg-text {
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%) translateY(60px);
-    opacity:0;
-    color:var(--accent);
-    font-size:20px;
-    font-weight:600;
-    transition:all 1.2s ease;
-    pointer-events:none;
+    position:absolute; left:50%; transform:translateX(-50%) translateY(60px);
+    opacity:0; color:var(--accent); font-size:20px; font-weight:600;
+    transition:all 1.2s ease; pointer-events:none;
   }
-  #easter-egg-text.show {
-    transform:translateX(-50%) translateY(-10px);
-    opacity:1;
-  }
+  #easter-egg-text.show { transform:translateX(-50%) translateY(-10px); opacity:1; }
 
   #searchbox { margin-top:26px; }
   #query {
@@ -72,14 +52,37 @@
     position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px;
   }
 
-  @keyframes barrelRoll {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(360deg); }
+  /* Shortcuts section */
+  #shortcuts {
+    display:flex; flex-wrap:wrap; justify-content:center; margin-top:40px; gap:28px;
   }
-  @keyframes flash {
-    0%,100% { background-color:var(--bg); }
-    50% { background-color:#ff000022; }
+  .shortcut {
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    cursor:pointer; width:88px;
   }
+  .shortcut:hover .icon { background:#2a2b2e; }
+  .icon {
+    width:48px; height:48px; border-radius:50%; background:var(--card);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; margin-bottom:6px; position:relative;
+  }
+  .icon img { width:24px; height:24px; border-radius:4px; }
+  .shortcut span { font-size:13px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:80px; }
+
+  .remove-btn {
+    position:absolute; top:-8px; right:-8px;
+    background:#ff5c5c; border:none; border-radius:50%; width:18px; height:18px;
+    color:white; font-size:12px; display:none; cursor:pointer;
+  }
+  .shortcut:hover .remove-btn { display:block; }
+
+  #add-shortcut-btn {
+    background:none; border:none; color:var(--accent); cursor:pointer;
+    font-size:14px; margin-top:10px; text-decoration:underline;
+  }
+
+  @keyframes barrelRoll { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  @keyframes flash { 0%,100%{background-color:var(--bg);} 50%{background-color:#ff000022;} }
 
   @media(max-width:520px){
     #query{ width:88vw; }
@@ -100,14 +103,20 @@
     </div>
   </form>
 
+  <!-- Shortcuts -->
+  <div id="shortcuts"></div>
+  <button id="add-shortcut-btn">+ Add Shortcut</button>
+
   <footer>© Indian Spyder 2025 (iB. Google)</footer>
 
 <script>
 const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
 const eggText = document.getElementById('easter-egg-text');
+const shortcutsContainer = document.getElementById('shortcuts');
 
 window.addEventListener('load', ()=> {
   document.body.classList.add('loaded');
+  loadShortcuts();
 });
 
 function fadeAndRedirect(url) {
@@ -117,10 +126,7 @@ function fadeAndRedirect(url) {
 }
 
 document.querySelector('#logo img').addEventListener('click', ()=> fadeAndRedirect(LOGO_URL));
-
-document.getElementById('lucky').addEventListener('click', ()=>{
-  fadeAndRedirect("https://en.wikipedia.org/wiki/Cheese");
-});
+document.getElementById('lucky').addEventListener('click', ()=> fadeAndRedirect("https://en.wikipedia.org/wiki/Cheese"));
 
 function showEgg(message, duration = 4000, specialEffect = null) {
   eggText.textContent = message;
@@ -138,48 +144,66 @@ function handleSearch(e){
   const q = document.getElementById('query').value.trim().toLowerCase();
   if(!q) return;
 
-  // --- Easter Eggs (exact matches only) ---
-  if(q === "denaho"){
-    showEgg("🐍 Denaho is better than Elian", 4000, "flash");
-    return;
-  }
+  // --- Easter Eggs ---
+  if(q === "denaho"){ showEgg("🐍 Denaho is better than Elian", 4000, "flash"); return; }
+  if(q === "elian" || q === "lower"){ showEgg("🧀 Gurt yo", 4000); setTimeout(()=> fadeAndRedirect("https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"), 4000); return; }
+  if(q === "do a barrel roll"){ showEgg("🌀 Doing a Barrel Roll!", 1500, "roll"); return; }
+  if(q === "easter eggs" || q === "easter egg"){ showEgg("🐞 Easter Egg Found!", 4000); return; }
+  if(q === "spyder"){ showEgg("🕷️ Welcome to Spyder Mode!", 4000); return; }
+  if(q === "gay one in gc currently"){ showEgg("🌈 Current Gay Leader: Elian", 4000); setTimeout(()=> fadeAndRedirect("https://www.youtube.com/shorts/jnkTjr39jBE"), 4000); return; }
+  if(q === "is elian gay?"){ showEgg("yes", 4000); setTimeout(()=> fadeAndRedirect("https://www.youtube.com/watch?v=KO8NdVSWF7A"), 4000); return; }
 
-  if(q === "elian" || q === "lower"){
-    showEgg("🧀 Gurt yo", 4000);
-    setTimeout(()=> fadeAndRedirect("https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"), 4000);
-    return;
-  }
-
-  if(q === "do a barrel roll"){
-    showEgg("🌀 Doing a Barrel Roll!", 1500, "roll");
-    return;
-  }
-
-  if(q === "easter eggs" || q === "easter egg"){
-    showEgg("🐞 Easter Egg Found!", 4000);
-    return;
-  }
-
-  if(q === "spyder"){
-    showEgg("🕷️ Welcome to Spyder Mode!", 4000);
-    return;
-  }
-
-  if(q === "gay one in gc currently"){
-    showEgg("🌈 Current Gay Leader: Elian", 4000);
-    setTimeout(()=> fadeAndRedirect("https://www.youtube.com/shorts/jnkTjr39jBE"), 4000);
-    return;
-  }
-
-  if(q === "is elian gay?"){
-    showEgg("yes", 4000);
-    setTimeout(()=> fadeAndRedirect("https://www.youtube.com/watch?v=KO8NdVSWF7A"), 4000);
-    return;
-  }
-
-  // --- Normal Search ---
   fadeAndRedirect(`results.html?q=${encodeURIComponent(q)}`);
 }
+
+// --- Shortcuts System ---
+function loadShortcuts() {
+  const saved = JSON.parse(localStorage.getItem('spyder_shortcuts') || '[]');
+  shortcutsContainer.innerHTML = '';
+  saved.forEach((s, i) => addShortcutElement(s.name, s.url, i));
+}
+
+function saveShortcuts() {
+  const data = [];
+  document.querySelectorAll('.shortcut').forEach(div => {
+    data.push({ name: div.dataset.name, url: div.dataset.url });
+  });
+  localStorage.setItem('spyder_shortcuts', JSON.stringify(data));
+}
+
+function addShortcutElement(name, url, index) {
+  const div = document.createElement('div');
+  div.className = 'shortcut';
+  div.dataset.name = name;
+  div.dataset.url = url;
+
+  const icon = document.createElement('div');
+  icon.className = 'icon';
+  icon.textContent = name[0].toUpperCase();
+
+  const removeBtn = document.createElement('button');
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '×';
+  removeBtn.onclick = (e) => { e.stopPropagation(); div.remove(); saveShortcuts(); };
+
+  icon.appendChild(removeBtn);
+  div.appendChild(icon);
+  const span = document.createElement('span');
+  span.textContent = name;
+  div.appendChild(span);
+
+  div.onclick = ()=> fadeAndRedirect(url);
+  shortcutsContainer.appendChild(div);
+}
+
+document.getElementById('add-shortcut-btn').addEventListener('click', ()=>{
+  const name = prompt("Enter shortcut name:");
+  if(!name) return;
+  const url = prompt("Enter shortcut URL (include https://):");
+  if(!url) return;
+  addShortcutElement(name, url);
+  saveShortcuts();
+});
 </script>
 </body>
 </html>
