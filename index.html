@@ -1,145 +1,180 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>COUNTDOWN TO INDIAN SPYDER</title>
-  <style>
-    :root{
-      --bg-1:#000000; --bg-2:#000000; /* Changed to black */
-      --card:#0b1220; --accent:#ff6b6b; --muted:#9aa0a6; --glass: rgba(255,255,255,0.04);
-      --maxw:900px;
-      font-family: Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
-    }
-    html,body{height:100%;margin:0;padding:0;}
-    body{
-      display:flex;align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,var(--bg-1),var(--bg-2));
-      color:var(--muted);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-      animation:bgwave 8s ease-in-out infinite alternate;
-      background-size:400% 400%;
-    }
-    @keyframes bgwave {
-      0% { background-position:0% 50%; }
-      50% { background-position:100% 50%; }
-      100% { background-position:0% 50%; }
-    }
-    .wrap{width:calc(100% - 40px);max-width:var(--maxw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(8px);border:1px solid rgba(255,255,255,0.04);
-      display:grid;grid-template-columns:1fr;gap:18px;align-items:center;
-    }
-    h1{margin:0;font-size:24px;color:#fff;text-align:center;letter-spacing:1px}
-    .timer{display:flex;gap:14px;justify-content:center;align-items:center;padding:26px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);animation:wave 2s ease-in-out infinite alternate;}
-    .segment{display:flex;flex-direction:column;align-items:center;min-width:80px}
-    .digits{display:flex;gap:8px}
-    .digit{min-width:48px;padding:12px 10px;border-radius:8px;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));text-align:center;font-weight:700;font-size:26px;color:#fff;box-shadow: inset 0 -6px 14px rgba(0,0,0,0.35);animation:rainbow 5s linear infinite;}
-    .label{margin-top:8px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-    .digit.tick{animation:pop 360ms cubic-bezier(.2,.9,.2,1), rainbow 5s linear infinite;}
-    @keyframes pop{0%{transform:translateY(-6px) scale(1.02);opacity:0.65}50%{transform:translateY(2px) scale(1.04);opacity:1}100%{transform:translateY(0) scale(1)}}
-    @keyframes wave{0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
-    @keyframes rainbow{
-      0%{color:#ff0000;}
-      16%{color:#ff7f00;}
-      33%{color:#ffff00;}
-      50%{color:#00ff00;}
-      66%{color:#0000ff;}
-      83%{color:#4b0082;}
-      100%{color:#8f00ff;}
-    }
-    .glow{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;filter:blur(46px);opacity:0.14;background:radial-gradient(circle at 30% 30%, rgba(255,107,107,0.6), transparent 20%), radial-gradient(circle at 70% 70%, rgba(60,160,255,0.6), transparent 18%);pointer-events:none}
-    .play-btn{
-      position:fixed;bottom:20px;right:20px;padding:10px 18px;border:none;border-radius:12px;
-      background:#fff2;color:#fff;font-weight:600;cursor:pointer;backdrop-filter:blur(8px);
-      transition:all .25s ease;opacity:.7;
-    }
-    .play-btn:hover{opacity:1;transform:scale(1.05);}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SpyderSearch</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+  :root{
+    --bg:#121212; --card:#202124; --muted:#9aa0a6; --text:#e8eaed; --accent:#8ab4f8;
+  }
+  html,body{height:100%; margin:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    text-align:center;
+    transition:opacity 1.2s ease;
+    opacity:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.loaded{opacity:1;}
+
+  /* Logo */
+  #logo {
+    margin-top:120px;
+    transition:transform .35s ease, opacity 1s;
+    cursor:pointer;
+    position:relative;
+  }
+  #logo img{
+    width:360px;
+    max-width:86vw;
+    display:block;
+    margin:0 auto;
+    transition: transform .35s ease;
+  }
+  #logo:hover img{
+    transform: translateY(-8px); /* hover upward */
+  }
+
+  /* Easter egg text */
+  #easter-egg-text {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%) translateY(60px);
+    opacity:0;
+    color:var(--accent);
+    font-size:20px;
+    font-weight:600;
+    transition:all 1.2s ease;
+    pointer-events:none;
+  }
+  #easter-egg-text.show {
+    transform:translateX(-50%) translateY(-10px);
+    opacity:1;
+  }
+
+  /* Search */
+  #searchbox { margin-top:26px; }
+  #query {
+    width:520px; max-width:86vw; height:40px; border-radius:24px; padding:8px 16px;
+    background:var(--card); border:1px solid #333; color:var(--text); outline:none; font-size:16px;
+    transition: box-shadow .18s ease, border-color .18s ease;
+  }
+  #query:focus{ box-shadow:0 6px 20px rgba(0,0,0,0.6); border-color:rgba(138,180,248,0.18); }
+
+  .btn-row{ margin-top:16px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .btn{
+    padding:10px 18px; border-radius:6px; border:1px solid #333; background:#2b2b2d; color:var(--text);
+    font-size:14px; cursor:pointer; transition: transform .08s ease, background .12s ease;
+  }
+  .btn:hover{ transform:translateY(-3px); background:#343539; }
+
+  /* Shortcuts */
+  #shortcuts-wrap{ margin-top:44px; display:flex; justify-content:center; }
+  #shortcuts{
+    max-width:760px; width:100%; display:flex; flex-wrap:wrap; gap:22px; justify-content:center; padding:0 12px;
+  }
+
+  .tile{
+    width:92px; height:92px; border-radius:12px; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:6px; background:transparent; cursor:grab; user-select:none; position:relative;
+    transition: transform .18s ease, background .12s ease;
+  }
+  .tile:active{ cursor:grabbing; transform:scale(.98); }
+  .tile:hover{ background: rgba(255,255,255,0.03); transform:translateY(-6px); }
+
+  .icon{
+    width:52px; height:52px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; overflow:hidden;
+    transition: transform .15s ease;
+  }
+  .icon img{ width:40px; height:40px; object-fit:cover; border-radius:50%; display:block; }
+  .label{ font-size:13px; color:var(--text); opacity:.95; max-width:86px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .tile .action {
+    display:none;
+    position:absolute; top:6px; width:28px; height:28px; border-radius:6px; background:rgba(0,0,0,0.45);
+    border:1px solid rgba(255,255,255,0.04); color:var(--muted);
+    font-size:13px; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .tile:hover .action { display:flex; }
+  .action.edit{ left:6px; } .action.remove{ right:6px; }
+
+  .add-tile{
+    width:92px; height:92px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border:1px dashed rgba(255,255,255,0.06); color:var(--muted); cursor:pointer; transition: background .12s;
+  }
+  .add-tile:hover{ background: rgba(255,255,255,0.02); color:var(--text); }
+
+  footer{ position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px; }
+
+  @media(max-width:520px){
+    #query{ width:88vw; }
+    .tile{ width:80px; height:80px;}
+    .icon{width:48px;height:48px;}
+  }
+</style>
 </head>
 <body>
-  <audio id="bgm" src="indian.mp3" loop></audio>
-
-  <div class="glow"></div>
-  <div class="wrap">
-    <h1>COUNTDOWN TO INDIAN SPYDER</h1>
-    <section class="timer">
-      <div class="segment">
-        <div class="digits"><div class="digit" id="days">0</div></div>
-        <div class="label">Days</div>
-      </div>
-      <div class="segment">
-        <div class="digits"><div class="digit" id="hours">00</div></div>
-        <div class="label">Hours</div>
-      </div>
-      <div class="segment">
-        <div class="digits"><div class="digit" id="minutes">00</div></div>
-        <div class="label">Minutes</div>
-      </div>
-      <div class="segment">
-        <div class="digits"><div class="digit" id="seconds">00</div></div>
-        <div class="label">Seconds</div>
-      </div>
-    </section>
+  <div id="logo" title="Go to DragonX">
+    <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" />
   </div>
+  <div id="easter-egg-text">🐞 Easter Egg Found!</div>
 
-  <button class="play-btn" id="playBtn">▶ Play Music</button>
+  <form id="searchbox" onsubmit="handleSearch(event)">
+    <input id="query" type="text" placeholder="Search SpyderSearch..." autocomplete="off" />
+    <div class="btn-row">
+      <button type="submit" class="btn">Spyder Search</button>
+      <button type="button" id="lucky" class="btn">I'm Feeling Lucky</button>
+    </div>
+  </form>
 
+  <div id="status" aria-live="polite"></div>
+
+  <footer>© SpyderGurt 2025</footer>
+  
   <script>
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minsEl = document.getElementById('minutes');
-    const secsEl = document.getElementById('seconds');
-    const audio = document.getElementById('bgm');
-    const playBtn = document.getElementById('playBtn');
+  const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
 
-    const targetMs = 1767235445000; // Fixed: milliseconds epoch
+  window.addEventListener('load', ()=> document.body.classList.add('loaded'));
+  document.querySelector('#logo img').addEventListener('click', ()=> window.location.href = LOGO_URL);
 
-    function formatNumber(n, pad=2){return String(n).padStart(pad,'0');}
+  document.getElementById('lucky').addEventListener('click', ()=>{
+    window.location.href = "https://en.wikipedia.org/wiki/Cheese";
+  });
 
-    function tick(){
-      const now = Date.now();
-      let diff = Math.max(0, targetMs - now);
-      const sec = Math.floor(diff/1000) % 60;
-      const min = Math.floor(diff/60000) % 60;
-      const hr = Math.floor(diff/3600000) % 24;
-      const days = Math.floor(diff/86400000);
+  function handleSearch(e){
+    e.preventDefault();
+    const q = document.getElementById('query').value.trim().toLowerCase();
+    const eggText = document.getElementById('easter-egg-text');
+    if(!q) return;
 
-      updateIfChanged(daysEl, days);
-      updateIfChanged(hoursEl, formatNumber(hr));
-      updateIfChanged(minsEl, formatNumber(min));
-      updateIfChanged(secsEl, formatNumber(sec));
+    // Easter eggs
+    if(q.includes("denaho")) return alert("Denaho is better than Elian");
 
-      requestAnimationFrame(tick);
+    if(q.includes("elian") || q === "lower"){
+      alert("gurt yo");
+      setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3500);
+      return;
     }
 
-    function updateIfChanged(el, val){
-      if(el.textContent !== String(val)){
-        el.textContent = val;
-        el.classList.remove('tick');
-        void el.offsetWidth;
-        el.classList.add('tick');
-        setTimeout(()=>el.classList.remove('tick'),400);
-      }
+    if(q === "do a barrel roll"){
+      document.body.style.animation = "barrelRoll 1s linear";
+      setTimeout(()=> document.body.style.animation = "", 1000);
+      return;
     }
 
-    requestAnimationFrame(tick);
-
-    async function tryPlay() {
-      try {
-        await audio.play();
-        playBtn.style.display = 'none';
-      } catch(e) {
-        console.log('Autoplay blocked; waiting for user gesture.');
-      }
+    if(q === "easter eggs" || q.includes("easter egg")){
+      eggText.classList.add('show');
+      setTimeout(()=> eggText.classList.remove('show'), 4000);
+      return;
     }
 
-    audio.volume = 1.0;
-    tryPlay();
-
-    playBtn.addEventListener('click', () => {
-      audio.play().then(() => {
-        playBtn.style.display = 'none';
-      }).catch(err => console.error('Playback failed:', err));
-    });
+    // normal search → redirect to results page
+    window.location.href = `results.html?q=${encodeURIComponent(q)}`;
+  }
   </script>
 </body>
 </html>
