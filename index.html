@@ -21,7 +21,6 @@
   }
   body.loaded {opacity:1;}
 
-  /* Logo */
   #logo {
     margin-top:120px;
     transition:transform .35s ease, opacity 1s;
@@ -37,7 +36,6 @@
   }
   #logo:hover img { transform: translateY(-8px); }
 
-  /* Easter egg text */
   #easter-egg-text {
     position:absolute;
     left:50%;
@@ -54,7 +52,6 @@
     opacity:1;
   }
 
-  /* Search */
   #searchbox { margin-top:26px; }
   #query {
     width:520px; max-width:86vw; height:40px; border-radius:24px; padding:8px 16px;
@@ -74,7 +71,6 @@
     position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px;
   }
 
-  /* Animations */
   @keyframes barrelRoll {
     from { transform:rotate(0deg); }
     to { transform:rotate(360deg); }
@@ -132,13 +128,13 @@ function handleSearch(e){
   const q = document.getElementById('query').value.trim().toLowerCase();
   if(!q) return;
 
-  // --- Easter Eggs ---
-  if(q.includes("denaho")){
+  // --- Easter Eggs (exact matches only) ---
+  if(q === "denaho"){
     showEgg("🐍 Denaho is better than Elian", 4000, "flash");
     return;
   }
 
-  if(q.includes("elian") || q === "lower"){
+  if(q === "elian" || q === "lower"){
     showEgg("🧀 Gurt yo", 4000);
     setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 4000);
     return;
@@ -149,7 +145,7 @@ function handleSearch(e){
     return;
   }
 
-  if(q === "easter eggs" || q.includes("easter egg")){
+  if(q === "easter eggs" || q === "easter egg"){
     showEgg("🐞 Easter Egg Found!", 4000);
     return;
   }
@@ -159,10 +155,15 @@ function handleSearch(e){
     return;
   }
 
-  // 🌈 New Easter Egg
   if(q === "gay one in gc currently"){
     showEgg("🌈 Current Gay Leader: Elian", 4000);
     setTimeout(()=> window.location.href = "https://www.youtube.com/shorts/jnkTjr39jBE", 4000);
+    return;
+  }
+
+  if(q === "is elian gay?"){
+    showEgg("yes", 4000);
+    setTimeout(()=> window.location.href = "https://www.youtube.com/watch?v=KO8NdVSWF7A", 4000);
     return;
   }
 
