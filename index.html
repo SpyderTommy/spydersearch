@@ -159,6 +159,13 @@ function handleSearch(e){
     return;
   }
 
+  // 🌈 New Easter Egg
+  if(q === "gay one in gc currently"){
+    showEgg("🌈 Current Gay Leader: Elian", 4000);
+    setTimeout(()=> window.location.href = "https://www.youtube.com/shorts/jnkTjr39jBE", 4000);
+    return;
+  }
+
   // --- Normal Search ---
   window.location.href = `results.html?q=${encodeURIComponent(q)}`;
 }
