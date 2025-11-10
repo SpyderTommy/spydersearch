@@ -74,13 +74,11 @@
     position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px;
   }
 
-  /* Barrel roll animation */
+  /* Animations */
   @keyframes barrelRoll {
     from { transform:rotate(0deg); }
     to { transform:rotate(360deg); }
   }
-
-  /* Flashing background for “denaho” */
   @keyframes flash {
     0%,100% { background-color:var(--bg); }
     50% { background-color:#ff000022; }
@@ -109,6 +107,7 @@
 
 <script>
 const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
+const eggText = document.getElementById('easter-egg-text');
 
 window.addEventListener('load', ()=> document.body.classList.add('loaded'));
 document.querySelector('#logo img').addEventListener('click', ()=> window.location.href = LOGO_URL);
@@ -117,41 +116,46 @@ document.getElementById('lucky').addEventListener('click', ()=>{
   window.location.href = "https://en.wikipedia.org/wiki/Cheese";
 });
 
+function showEgg(message, duration = 4000, specialEffect = null) {
+  eggText.textContent = message;
+  eggText.classList.add('show');
+  if (specialEffect === 'flash') document.body.style.animation = "flash 1s linear 3";
+  if (specialEffect === 'roll') document.body.style.animation = "barrelRoll 1s linear";
+  setTimeout(()=>{
+    eggText.classList.remove('show');
+    document.body.style.animation = "";
+  }, duration);
+}
+
 function handleSearch(e){
   e.preventDefault();
   const q = document.getElementById('query').value.trim().toLowerCase();
-  const eggText = document.getElementById('easter-egg-text');
   if(!q) return;
 
   // --- Easter Eggs ---
   if(q.includes("denaho")){
-    alert("Denaho is better than Elian");
-    document.body.style.animation = "flash 1s linear 3";
+    showEgg("🐍 Denaho is better than Elian", 4000, "flash");
     return;
   }
 
   if(q.includes("elian") || q === "lower"){
-    alert("gurt yo");
-    setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 3000);
+    showEgg("🧀 Gurt yo", 4000);
+    setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 4000);
     return;
   }
 
   if(q === "do a barrel roll"){
-    document.body.style.animation = "barrelRoll 1s linear";
-    setTimeout(()=> document.body.style.animation = "", 1000);
+    showEgg("🌀 Doing a Barrel Roll!", 1500, "roll");
     return;
   }
 
   if(q === "easter eggs" || q.includes("easter egg")){
-    eggText.classList.add('show');
-    setTimeout(()=> eggText.classList.remove('show'), 4000);
+    showEgg("🐞 Easter Egg Found!", 4000);
     return;
   }
 
   if(q === "spyder"){
-    eggText.textContent = "🕷️ Welcome to Spyder Mode!";
-    eggText.classList.add('show');
-    setTimeout(()=> eggText.classList.remove('show'), 4000);
+    showEgg("🕷️ Welcome to Spyder Mode!", 4000);
     return;
   }
 
