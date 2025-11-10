@@ -15,11 +15,12 @@
     color:var(--text);
     font-family: Arial, Helvetica, sans-serif;
     text-align:center;
-    transition:opacity 1.2s ease;
     opacity:0;
+    transition:opacity 1s ease;
     -webkit-font-smoothing:antialiased;
   }
   body.loaded {opacity:1;}
+  body.fade-out {opacity:0;}
 
   #logo {
     margin-top:120px;
@@ -105,11 +106,20 @@
 const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
 const eggText = document.getElementById('easter-egg-text');
 
-window.addEventListener('load', ()=> document.body.classList.add('loaded'));
-document.querySelector('#logo img').addEventListener('click', ()=> window.location.href = LOGO_URL);
+window.addEventListener('load', ()=> {
+  document.body.classList.add('loaded');
+});
+
+function fadeAndRedirect(url) {
+  document.body.classList.remove('loaded');
+  document.body.classList.add('fade-out');
+  setTimeout(()=> window.location.href = url, 800);
+}
+
+document.querySelector('#logo img').addEventListener('click', ()=> fadeAndRedirect(LOGO_URL));
 
 document.getElementById('lucky').addEventListener('click', ()=>{
-  window.location.href = "https://en.wikipedia.org/wiki/Cheese";
+  fadeAndRedirect("https://en.wikipedia.org/wiki/Cheese");
 });
 
 function showEgg(message, duration = 4000, specialEffect = null) {
@@ -136,7 +146,7 @@ function handleSearch(e){
 
   if(q === "elian" || q === "lower"){
     showEgg("🧀 Gurt yo", 4000);
-    setTimeout(()=> window.location.href = "https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ", 4000);
+    setTimeout(()=> fadeAndRedirect("https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"), 4000);
     return;
   }
 
@@ -157,18 +167,18 @@ function handleSearch(e){
 
   if(q === "gay one in gc currently"){
     showEgg("🌈 Current Gay Leader: Elian", 4000);
-    setTimeout(()=> window.location.href = "https://www.youtube.com/shorts/jnkTjr39jBE", 4000);
+    setTimeout(()=> fadeAndRedirect("https://www.youtube.com/shorts/jnkTjr39jBE"), 4000);
     return;
   }
 
   if(q === "is elian gay?"){
     showEgg("yes", 4000);
-    setTimeout(()=> window.location.href = "https://www.youtube.com/watch?v=KO8NdVSWF7A", 4000);
+    setTimeout(()=> fadeAndRedirect("https://www.youtube.com/watch?v=KO8NdVSWF7A"), 4000);
     return;
   }
 
   // --- Normal Search ---
-  window.location.href = `results.html?q=${encodeURIComponent(q)}`;
+  fadeAndRedirect(`results.html?q=${encodeURIComponent(q)}`);
 }
 </script>
 </body>
