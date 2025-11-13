@@ -98,6 +98,46 @@
   }
   .spyder-btn:hover { background:#343539; }
 
+  /* App Launcher */
+  #app-launcher-btn {
+    position:fixed;
+    top:14px; right:14px;
+    font-size:20px; background:#2b2b2d; border-radius:50%;
+    width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .2s ease;
+    z-index:150;
+  }
+  #app-launcher-btn:hover { background:#3a3a3d; }
+
+  #app-launcher {
+    position:fixed;
+    top:60px; right:14px;
+    background:#1f1f1f; border-radius:12px;
+    box-shadow:0 4px 30px rgba(0,0,0,0.6);
+    display:grid; grid-template-columns:repeat(3, 80px);
+    gap:18px; padding:20px;
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    transform:scale(0.9);
+    z-index:120;
+  }
+  #app-launcher.show {
+    opacity:1; pointer-events:auto; transform:scale(1);
+  }
+  #app-launcher .app {
+    display:flex; flex-direction:column; align-items:center;
+    font-size:12px; color:#e8eaed; cursor:pointer;
+    transition:transform .1s ease, background .15s ease;
+    padding:6px; border-radius:8px;
+  }
+  #app-launcher .app:hover {
+    background:#2a2a2d; transform:translateY(-2px);
+  }
+  #app-launcher .app img {
+    width:36px; height:36px; margin-bottom:6px;
+    border-radius:6px;
+  }
+
   @keyframes flash { 0%,100%{background-color:var(--bg);} 50%{background-color:#ff000055;} }
   @keyframes barrelRoll { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
@@ -107,6 +147,20 @@
 </style>
 </head>
 <body>
+  <!-- App Launcher -->
+  <div id="app-launcher-btn" title="Apps">☰</div>
+  <div id="app-launcher">
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_48dp.png"><span>Gmail</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"><span>Drive</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/classroom_2020q4_48dp.png"><span>Classroom</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"><span>Docs</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"><span>Sheets</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/slides_2020q4_48dp.png"><span>Slides</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"><span>Calendar</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/meet_2020q4_48dp.png"><span>Meet</span></div>
+    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/chat_2020q4_48dp.png"><span>Chat</span></div>
+  </div>
+
   <div id="logo" title="Search Logo">
     <img src="https://github.com/SpyderTommy/spydersearch/blob/main/SpyderLogo.png?raw=true" alt="SpyderSearch Logo" />
   </div>
@@ -166,7 +220,6 @@ function showEgg(message, duration = 4000, specialEffect = null) {
   }, duration);
 }
 
-// 🔸 "Spyder Mode" secret menu
 function toggleSpyderMenu(show = true) {
   if(show) spyderMenu.classList.add('show');
   else spyderMenu.classList.remove('show');
@@ -183,7 +236,6 @@ function handleSearch(e){
   const q = document.getElementById('query').value.trim().toLowerCase();
   if(!q) return;
 
-  // Easter Eggs
   if(q === "denaho"){ showEgg("🐍 Denaho is better than Elian", 4000, "flash"); return; }
   if(q === "elian" || q === "lower"){ showEgg("🧀 Gurt yo", 4000); setTimeout(()=> fadeAndRedirect("https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"), 4000); return; }
   if(q === "do a barrel roll"){ showEgg("🌀 Doing a Barrel Roll!", 1500, "roll"); return; }
@@ -195,19 +247,12 @@ function handleSearch(e){
   fadeAndRedirect(`results.html?q=${encodeURIComponent(q)}`);
 }
 
-/* 
-   🔸 Shortcut system with simulated cloud persistence.
-   In production, replace the localStorage calls with
-   fetch('/api/shortcuts', {method:'POST', body:JSON.stringify(data)})
-*/
+/* Shortcut system */
 function loadShortcuts() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('spyder_shortcuts_cloud') || '[]');
-    shortcutsContainer.innerHTML = '';
-    saved.forEach((s, i) => addShortcutElement(s.name, s.url, i));
-  } catch(err){ console.error("Load error", err); }
+  const saved = JSON.parse(localStorage.getItem('spyder_shortcuts_cloud') || '[]');
+  shortcutsContainer.innerHTML = '';
+  saved.forEach((s, i) => addShortcutElement(s.name, s.url, i));
 }
-
 function saveShortcuts() {
   const data = [];
   document.querySelectorAll('.shortcut').forEach(div => {
@@ -215,32 +260,26 @@ function saveShortcuts() {
   });
   localStorage.setItem('spyder_shortcuts_cloud', JSON.stringify(data));
 }
-
 function addShortcutElement(name, url, index) {
   const div = document.createElement('div');
   div.className = 'shortcut';
   div.dataset.name = name;
   div.dataset.url = url;
-
   const icon = document.createElement('div');
   icon.className = 'icon';
   icon.textContent = name[0].toUpperCase();
-
   const removeBtn = document.createElement('button');
   removeBtn.className = 'remove-btn';
   removeBtn.textContent = '×';
   removeBtn.onclick = (e) => { e.stopPropagation(); div.remove(); saveShortcuts(); };
-
   icon.appendChild(removeBtn);
   div.appendChild(icon);
   const span = document.createElement('span');
   span.textContent = name;
   div.appendChild(span);
-
   div.onclick = ()=> fadeAndRedirect(url);
   shortcutsContainer.appendChild(div);
 }
-
 document.getElementById('add-shortcut-btn').addEventListener('click', ()=>{
   const name = prompt("Enter shortcut name:");
   if(!name) return;
@@ -248,6 +287,16 @@ document.getElementById('add-shortcut-btn').addEventListener('click', ()=>{
   if(!url) return;
   addShortcutElement(name, url);
   saveShortcuts();
+});
+
+// --- App Launcher Toggle ---
+const appBtn = document.getElementById('app-launcher-btn');
+const appMenu = document.getElementById('app-launcher');
+appBtn.addEventListener('click', ()=> appMenu.classList.toggle('show'));
+document.addEventListener('click', (e)=>{
+  if(!appMenu.contains(e.target) && !appBtn.contains(e.target)){
+    appMenu.classList.remove('show');
+  }
 });
 </script>
 </body>
