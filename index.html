@@ -21,18 +21,15 @@
   }
   body.loaded {opacity:1;}
   body.fade-out {opacity:0;}
-
   #logo { margin-top:120px; transition:transform .35s ease, opacity 1s; cursor:pointer; position:relative; }
   #logo img { width:360px; max-width:86vw; display:block; margin:0 auto; transition: transform .35s ease; }
   #logo:hover img { transform: translateY(-8px); }
-
   #easter-egg-text {
     position:absolute; left:50%; transform:translateX(-50%) translateY(60px);
     opacity:0; color:var(--accent); font-size:20px; font-weight:600;
     transition:all 1.2s ease; pointer-events:none;
   }
   #easter-egg-text.show { transform:translateX(-50%) translateY(-10px); opacity:1; }
-
   #searchbox { margin-top:26px; }
   #query {
     width:520px; max-width:86vw; height:40px; border-radius:24px; padding:8px 16px;
@@ -40,19 +37,15 @@
     transition: box-shadow .18s ease, border-color .18s ease;
   }
   #query:focus { box-shadow:0 6px 20px rgba(0,0,0,0.6); border-color:rgba(138,180,248,0.18); }
-
   .btn-row { margin-top:16px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
   .btn {
     padding:10px 18px; border-radius:6px; border:1px solid #333; background:#2b2b2d; color:var(--text);
     font-size:14px; cursor:pointer; transition: transform .08s ease, background .12s ease;
   }
   .btn:hover { transform:translateY(-3px); background:#343539; }
-
   footer {
     position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px;
   }
-
-  /* Shortcuts */
   #shortcuts {
     display:flex; flex-wrap:wrap; justify-content:center; margin-top:40px; gap:28px;
   }
@@ -68,20 +61,16 @@
   }
   .icon img { width:24px; height:24px; border-radius:4px; }
   .shortcut span { font-size:13px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:80px; }
-
   .remove-btn {
     position:absolute; top:-8px; right:-8px;
     background:#ff5c5c; border:none; border-radius:50%; width:18px; height:18px;
     color:white; font-size:12px; display:none; cursor:pointer;
   }
   .shortcut:hover .remove-btn { display:block; }
-
   #add-shortcut-btn {
     background:none; border:none; color:var(--accent); cursor:pointer;
     font-size:14px; margin-top:10px; text-decoration:underline;
   }
-
-  /* Spyder Menu */
   #spyder-menu {
     position:fixed; top:0; right:-260px; width:240px; height:100%;
     background:rgba(20,20,20,0.96); box-shadow:-4px 0 20px rgba(0,0,0,0.6);
@@ -97,8 +86,6 @@
     cursor:pointer; transition:background .15s ease;
   }
   .spyder-btn:hover { background:#343539; }
-
-  /* App Launcher */
   #app-launcher-btn {
     position:fixed;
     top:14px; right:14px;
@@ -108,7 +95,6 @@
     z-index:150;
   }
   #app-launcher-btn:hover { background:#3a3a3d; }
-
   #app-launcher {
     position:fixed;
     top:60px; right:14px;
@@ -137,10 +123,8 @@
     width:36px; height:36px; margin-bottom:6px;
     border-radius:6px;
   }
-
   @keyframes flash { 0%,100%{background-color:var(--bg);} 50%{background-color:#ff000055;} }
   @keyframes barrelRoll { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-
   @media(max-width:520px){
     #query{ width:88vw; }
   }
@@ -150,15 +134,15 @@
   <!-- App Launcher -->
   <div id="app-launcher-btn" title="Apps">☰</div>
   <div id="app-launcher">
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_48dp.png"><span>Gmail</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"><span>Drive</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/classroom_2020q4_48dp.png"><span>Classroom</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"><span>Docs</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"><span>Sheets</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/slides_2020q4_48dp.png"><span>Slides</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"><span>Calendar</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/meet_2020q4_48dp.png"><span>Meet</span></div>
-    <div class="app"><img src="https://www.gstatic.com/images/branding/product/1x/chat_2020q4_48dp.png"><span>Chat</span></div>
+    <div class="app" data-url="https://mail.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_48dp.png"><span>Gmail</span></div>
+    <div class="app" data-url="https://drive.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"><span>Drive</span></div>
+    <div class="app" data-url="https://classroom.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/classroom_2020q4_48dp.png"><span>Classroom</span></div>
+    <div class="app" data-url="https://docs.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"><span>Docs</span></div>
+    <div class="app" data-url="https://sheets.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"><span>Sheets</span></div>
+    <div class="app" data-url="https://slides.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/slides_2020q4_48dp.png"><span>Slides</span></div>
+    <div class="app" data-url="https://calendar.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"><span>Calendar</span></div>
+    <div class="app" data-url="https://meet.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/meet_2020q4_48dp.png"><span>Meet</span></div>
+    <div class="app" data-url="https://chat.google.com"><img src="https://www.gstatic.com/images/branding/product/1x/chat_2020q4_48dp.png"><span>Chat</span></div>
   </div>
 
   <div id="logo" title="Search Logo">
@@ -174,11 +158,9 @@
     </div>
   </form>
 
-  <!-- Shortcuts -->
   <div id="shortcuts"></div>
   <button id="add-shortcut-btn">+ Add Shortcut</button>
 
-  <!-- Spyder Mode Menu -->
   <div id="spyder-menu">
     <h2>🕷 Spyder Menu</h2>
     <button class="spyder-btn" onclick="secretError('Activate Dragon Core')">Activate Dragon Core</button>
@@ -200,15 +182,20 @@ window.addEventListener('load', ()=> {
   loadShortcuts();
 });
 
+/* Fade + Redirect */
 function fadeAndRedirect(url) {
   document.body.classList.remove('loaded');
   document.body.classList.add('fade-out');
   setTimeout(()=> window.location.href = url, 800);
 }
 
+/* Logo redirect */
 document.querySelector('#logo img').addEventListener('click', ()=> fadeAndRedirect(LOGO_URL));
+
+/* I'm Feeling Lucky button */
 document.getElementById('lucky').addEventListener('click', ()=> fadeAndRedirect("https://en.wikipedia.org/wiki/Cheese"));
 
+/* Easter egg display */
 function showEgg(message, duration = 4000, specialEffect = null) {
   eggText.textContent = message;
   eggText.classList.add('show');
@@ -220,17 +207,20 @@ function showEgg(message, duration = 4000, specialEffect = null) {
   }, duration);
 }
 
+/* Spyder Menu toggle */
 function toggleSpyderMenu(show = true) {
   if(show) spyderMenu.classList.add('show');
   else spyderMenu.classList.remove('show');
 }
 
+/* Spyder Menu fake errors */
 function secretError(actionName){
   showEgg(`❌ ERROR: ${actionName} failed!`, 2000);
   document.body.style.animation = "flash 0.4s linear 3";
   setTimeout(()=> document.body.style.animation = "", 1500);
 }
 
+/* Search handler */
 function handleSearch(e){
   e.preventDefault();
   const q = document.getElementById('query').value.trim().toLowerCase();
@@ -247,7 +237,7 @@ function handleSearch(e){
   fadeAndRedirect(`results.html?q=${encodeURIComponent(q)}`);
 }
 
-/* Shortcut system */
+/* Shortcuts */
 function loadShortcuts() {
   const saved = JSON.parse(localStorage.getItem('spyder_shortcuts_cloud') || '[]');
   shortcutsContainer.innerHTML = '';
@@ -289,7 +279,7 @@ document.getElementById('add-shortcut-btn').addEventListener('click', ()=>{
   saveShortcuts();
 });
 
-// --- App Launcher Toggle ---
+/* App Launcher Toggle + Links */
 const appBtn = document.getElementById('app-launcher-btn');
 const appMenu = document.getElementById('app-launcher');
 appBtn.addEventListener('click', ()=> appMenu.classList.toggle('show'));
@@ -297,6 +287,14 @@ document.addEventListener('click', (e)=>{
   if(!appMenu.contains(e.target) && !appBtn.contains(e.target)){
     appMenu.classList.remove('show');
   }
+});
+
+/* Open app links */
+document.querySelectorAll('#app-launcher .app').forEach(app => {
+  app.addEventListener('click', () => {
+    const url = app.getAttribute('data-url');
+    if (url) window.open(url, '_blank');
+  });
 });
 </script>
 </body>
