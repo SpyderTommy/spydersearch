@@ -52,7 +52,7 @@
     position:fixed; bottom:18px; width:100%; text-align:center; color:var(--muted); font-size:13px;
   }
 
-  /* Shortcuts section */
+  /* Shortcuts */
   #shortcuts {
     display:flex; flex-wrap:wrap; justify-content:center; margin-top:40px; gap:28px;
   }
@@ -81,8 +81,25 @@
     font-size:14px; margin-top:10px; text-decoration:underline;
   }
 
+  /* Spyder Menu */
+  #spyder-menu {
+    position:fixed; top:0; right:-260px; width:240px; height:100%;
+    background:rgba(20,20,20,0.96); box-shadow:-4px 0 20px rgba(0,0,0,0.6);
+    padding:20px; transition:right .4s ease;
+    display:flex; flex-direction:column; align-items:flex-start;
+    z-index:100;
+  }
+  #spyder-menu.show { right:0; }
+  #spyder-menu h2 { color:var(--accent); margin:0 0 16px; font-size:20px; }
+  .spyder-btn {
+    width:100%; text-align:left; background:#2b2b2d; color:var(--text);
+    border:none; padding:10px; border-radius:4px; margin-bottom:10px;
+    cursor:pointer; transition:background .15s ease;
+  }
+  .spyder-btn:hover { background:#343539; }
+
+  @keyframes flash { 0%,100%{background-color:var(--bg);} 50%{background-color:#ff000055;} }
   @keyframes barrelRoll { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-  @keyframes flash { 0%,100%{background-color:var(--bg);} 50%{background-color:#ff000022;} }
 
   @media(max-width:520px){
     #query{ width:88vw; }
@@ -107,12 +124,22 @@
   <div id="shortcuts"></div>
   <button id="add-shortcut-btn">+ Add Shortcut</button>
 
+  <!-- Spyder Mode Menu -->
+  <div id="spyder-menu">
+    <h2>🕷 Spyder Menu</h2>
+    <button class="spyder-btn" onclick="secretError('Activate Dragon Core')">Activate Dragon Core</button>
+    <button class="spyder-btn" onclick="secretError('Launch Terminal 6')">Launch Terminal 6</button>
+    <button class="spyder-btn" onclick="secretError('Access Quantum Vault')">Access Quantum Vault</button>
+    <button class="spyder-btn" onclick="secretError('Initialize Nebula Engine')">Initialize Nebula Engine</button>
+  </div>
+
   <footer>© Indian Spyder 2025 (iB. Google)</footer>
 
 <script>
 const LOGO_URL = "http://spydertacos.space/DragonX_V4.html";
 const eggText = document.getElementById('easter-egg-text');
 const shortcutsContainer = document.getElementById('shortcuts');
+const spyderMenu = document.getElementById('spyder-menu');
 
 window.addEventListener('load', ()=> {
   document.body.classList.add('loaded');
@@ -139,28 +166,46 @@ function showEgg(message, duration = 4000, specialEffect = null) {
   }, duration);
 }
 
+// 🔸 "Spyder Mode" secret menu
+function toggleSpyderMenu(show = true) {
+  if(show) spyderMenu.classList.add('show');
+  else spyderMenu.classList.remove('show');
+}
+
+function secretError(actionName){
+  showEgg(`❌ ERROR: ${actionName} failed!`, 2000);
+  document.body.style.animation = "flash 0.4s linear 3";
+  setTimeout(()=> document.body.style.animation = "", 1500);
+}
+
 function handleSearch(e){
   e.preventDefault();
   const q = document.getElementById('query').value.trim().toLowerCase();
   if(!q) return;
 
-  // --- Easter Eggs ---
+  // Easter Eggs
   if(q === "denaho"){ showEgg("🐍 Denaho is better than Elian", 4000, "flash"); return; }
   if(q === "elian" || q === "lower"){ showEgg("🧀 Gurt yo", 4000); setTimeout(()=> fadeAndRedirect("https://youtu.be/w5BnMKOG33M?si=5iOsEG16GPKmJSIZ"), 4000); return; }
   if(q === "do a barrel roll"){ showEgg("🌀 Doing a Barrel Roll!", 1500, "roll"); return; }
   if(q === "easter eggs" || q === "easter egg"){ showEgg("🐞 Easter Egg Found!", 4000); return; }
-  if(q === "spyder"){ showEgg("🕷️ Welcome to Spyder Mode!", 4000); return; }
-  if(q === "gay one in gc currently"){ showEgg("🌈 Current Gay Leader: Elian", 4000); setTimeout(()=> fadeAndRedirect("https://www.youtube.com/shorts/jnkTjr39jBE"), 4000); return; }
+  if(q === "spyder"){ showEgg("🕷️ Welcome to Spyder Mode!", 3000); toggleSpyderMenu(true); return; }
+  if(q === "gay one in gc currently"){ showEgg("🌈 Current Gay Leader: Elian", 4000); setTimeout(()=> fadeAndRedirect("https://www.youtube.com/watch?v=KO8NdVSWF7A"), 4000); return; }
   if(q === "is elian gay?"){ showEgg("yes", 4000); setTimeout(()=> fadeAndRedirect("https://www.youtube.com/watch?v=KO8NdVSWF7A"), 4000); return; }
 
   fadeAndRedirect(`results.html?q=${encodeURIComponent(q)}`);
 }
 
-// --- Shortcuts System ---
+/* 
+   🔸 Shortcut system with simulated cloud persistence.
+   In production, replace the localStorage calls with
+   fetch('/api/shortcuts', {method:'POST', body:JSON.stringify(data)})
+*/
 function loadShortcuts() {
-  const saved = JSON.parse(localStorage.getItem('spyder_shortcuts') || '[]');
-  shortcutsContainer.innerHTML = '';
-  saved.forEach((s, i) => addShortcutElement(s.name, s.url, i));
+  try {
+    const saved = JSON.parse(localStorage.getItem('spyder_shortcuts_cloud') || '[]');
+    shortcutsContainer.innerHTML = '';
+    saved.forEach((s, i) => addShortcutElement(s.name, s.url, i));
+  } catch(err){ console.error("Load error", err); }
 }
 
 function saveShortcuts() {
@@ -168,7 +213,7 @@ function saveShortcuts() {
   document.querySelectorAll('.shortcut').forEach(div => {
     data.push({ name: div.dataset.name, url: div.dataset.url });
   });
-  localStorage.setItem('spyder_shortcuts', JSON.stringify(data));
+  localStorage.setItem('spyder_shortcuts_cloud', JSON.stringify(data));
 }
 
 function addShortcutElement(name, url, index) {
